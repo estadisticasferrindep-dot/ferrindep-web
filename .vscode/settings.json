@@ -1,0 +1,48 @@
+{
+    // === FILE WATCHING: Reduce CPU by excluding heavy directories ===
+    "files.watcherExclude": {
+        "**/node_modules/**": true,
+        "**/vendor/**": true,
+        "**/ferrindep/**": true,
+        "**/backups/**": true,
+        "**/storage/**": true,
+        "**/public/js/*.map": true,
+        "**/public/css/*.map": true,
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/google-sheets-worker/node_modules/**": true
+    },
+    // === SEARCH: Don't search in generated/large files ===
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true,
+        "**/ferrindep": true,
+        "**/backups": true,
+        "**/public/js/app.js": true,
+        "**/public/js/app.js.map": true,
+        "**/public/css/app.css.map": true,
+        "**/package-lock.json": true,
+        "**/temp_laravel.log": true,
+        "**/output_page.html": true,
+        "**/carrito_source*.html": true,
+        "**/google-sheets-worker/node_modules": true
+    },
+    // === EXPLORER: Hide clutter from sidebar ===
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/vendor": true,
+        "**/.git": true
+    },
+    // === TYPESCRIPT: Disable for this PHP/Vue project ===
+    "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+    "typescript.suggest.enabled": false,
+    "javascript.suggest.enabled": false,
+    // === EDITOR: Performance tweaks ===
+    "editor.minimap.enabled": false,
+    "editor.bracketPairColorization.enabled": false,
+    "files.autoSave": "onFocusChange",
+    // === EXTENSIONS: Reduce background work ===
+    "git.autorefresh": false,
+    "git.autofetch": false,
+    "npm.autoDetect": "off"
+}

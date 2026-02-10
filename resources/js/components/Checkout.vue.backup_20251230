@@ -1,0 +1,617 @@
+<template>
+    <div class="section-envio">
+        
+        <!-- SUBTOTAL -->
+        <div class="fila" style="margin-bottom: 20px;">
+             <label style="font-size: 20px;">Subtotal</label>
+             <span class="precio" style="font-size: 22px;">${{ subtotal | toCurrency }}</span> 
+        </div>
+        
+        <hr>
+
+        <!-- ENVIO A DOMICILIO -->
+        <div class="opcion-envio mt-3 mb-3">
+             <div class="d-flex align-items-center mb-2">
+                <input type="radio" name="envio" id="envio_domicilio" 
+                       value="caba" 
+                       v-model="envio">
+                <label for="envio_domicilio" class="ml-2 mb-0 font-weight-bold" style="font-size:16px;">
+                    Envío a domicilio
+                </label>
+             </div>
+
+             <!-- DETALLES DE ENVIO -->
+             <div v-if="envio === 'caba'" class="ml-4 pl-1">
+                 
+                 <!-- Caso: Ubicacion Detectada -->
+                 <div v-if="!editandoUbicacion && localidadDetectada">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <p class="mb-0" style="font-size: 16px; color: #FD914D; font-weight: bold; display: flex; align-items: center;">
+                                 <!-- SVG Icon Fixed -->
+                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16" style="margin-right: 5px;">
+                                     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
+                                 </svg>
+                                 {{ localidadDetectada }}
+                             </p>
+                             <small v-if="ubicacionPreasignada && ubicacionPreasignada.partidoName && !localidadManual" class="text-muted">
+                                 ({{ ubicacionPreasignada.partidoName }})
+                             </small>
+                             <a href="#" @click.prevent="activarEdicion" style="font-size:12px; display:block; color:#999; margin-top:2px;">(Cambiar)</a>
+                         </div>
+                         
+                         <!-- PRECIO -->
+                         <div class="text-right">
+                             <span v-if="envio_total > 0" class="precio" style="font-size: 16px;">${{ envio_total | toCurrency }}</span>
+                             <span v-else-if="loadingCost" class="precio" style="font-size: 16px;">Calculando...</span>
+                             <span v-else class="precio" style="font-size: 16px;">Consultar</span>
+                         </div>
+                     </div>
+                 </div>
+
+                 <!-- Caso: Editando / Buscando -->
+                 <div v-else>
+                     <input id="google-autocomplete-cart" type="text" class="form-control" placeholder="Ingrese su localidad..." autocomplete="off">
+                 </div>
+             </div>
+        </div>
+
+        <!-- RETIRO POR DEPOSITO -->
+        <div class="opcion-envio mb-3">
+             <div class="d-flex align-items-center">
+                <input type="radio" name="envio" id="envio_fabrica" value="fabrica" v-model="envio">
+                <label for="envio_fabrica" class="ml-2 mb-0" style="font-size:16px;">Retiro por depósito</label>
+             </div>
+             <div v-if="envio === 'fabrica'" class="ml-4 mt-1 text-muted" style="font-size:13px;">
+                <p class="mb-0" v-if="parrafoEnvioFabrica" v-html="parrafoEnvioFabrica"></p>
+                <p class="mb-0" v-else>Puede retirar su pedido por nuestra fábrica sin costo.</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- TOTAL -->
+        <div class="fila mt-3 mb-3">
+             <label style="font-size: 22px; font-weight: bold;">Total</label>
+             <span class="precio" style="font-size: 24px; font-weight: bold; color: #FD914D;">${{ total | toCurrency }}</span> 
+        </div>
+
+        <!-- BOTONES -->
+        <div class="mt-4">
+            <button @click="finalizar" class="btn-solid mb-2">CONTINUAR COMPRA</button>
+            <button @click="productos" class="btn-solid">AGREGAR MÁS PRODUCTOS</button>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    import Swal from 'sweetalert2';
+
+    export default {
+        props:{
+            rutaProductos:'',
+            // Props from Blade
+            envios:{}, destinos:{}, zonas:{}, destinozonas:{}, pesozonas:{},
+            login:{}, target: '',
+            parrafoEnvioFabrica: {type:String},
+            costoEnvioFabrica: {type: Number},
+            // Sync props
+            step: {}, subtotal:{}, total:{}, envio2:{}, 
+            ubicacionPreasignada: { type: Object, default: () => ({}) }
+        },
+        data() {
+            return {
+                envio:'caba',
+                editandoUbicacion: false,
+                shippingCost: 0, 
+                unitShippingPrice: 0, 
+                envio_total: 0,
+                destinoId: 0,
+                loadingCost: false,
+                
+                localidadManual: null, 
+
+                // Hydrated Data
+                destinos2: [], zonas2: [], destinozonas2: [],
+                cart: [],
+                cantidadItems: 0,
+                pesoTotal: 0,
+                bultos: 1,
+                
+                anulaEnvio: false,
+                autocompleteInstance: null,
+                isDataReady: false 
+            }
+        },
+        computed: {
+            localidadDetectada() {
+                if (this.localidadManual) return this.localidadManual;
+                if (this.ubicacionPreasignada && this.ubicacionPreasignada.cityName) {
+                    return this.ubicacionPreasignada.cityName;
+                }
+                return null;
+            }
+        },
+        watch:{
+            shippingCost() { this.recalcularTodo(); },
+            // WATCHER: When data finally arrives
+            destinos2: {
+                handler(val) {
+                    if (val && val.length > 0) {
+                        this.isDataReady = true;
+                        if (this.localidadDetectada) {
+                            console.log("🔄 Datos listos (Watcher). Ejecutando cálculo diferido...");
+                            this.triggerAutoStart();
+                        }
+                    }
+                },
+                deep: true
+            },
+            envio(val) {
+                if (val === 'caba') {
+                     if (this.localidadDetectada) this.editandoUbicacion = false;
+                     else this.activarEdicion();
+                }
+                this.recalcularTodo();
+            },
+            subtotal() { this.recalcularTodo(); },
+            total() { this.loadCart(); },
+            ubicacionPreasignada: {
+                handler(val) {
+                    if (val && val.cityName) {
+                         console.log("📍 Ubicación recibida (Watch):", val.cityName);
+                         this.localidadManual = null;
+                         this.editandoUbicacion = false;
+                         this.$nextTick(() => {
+                             this.resolveLocation(val.cityName, val.partidoName, val.regionName);
+                         });
+                    }
+                },
+                deep: true
+            }
+        },
+
+        created() {
+            this.loadCart();
+            
+            // SMART HYDRATION
+            const hydrate = (prop) => {
+                if (!prop) return [];
+                if (Array.isArray(prop) || typeof prop === 'object') return prop;
+                try { return JSON.parse(prop); } catch (e) { return []; }
+            };
+
+            this.destinos2 = hydrate(this.destinos);
+            this.zonas2 = hydrate(this.zonas);
+            this.destinozonas2 = hydrate(this.destinozonas);
+            
+            // Check if data is already ready
+            if (this.destinos2.length > 0) this.isDataReady = true;
+            
+            console.log("=== SISTEMA LISTO (V12.6 - EMPTY CART GUARD) ===");
+            this.seAnulaEnvio();
+            this.$nextTick(() => { this.recalcularTodo(); });
+        },
+        
+        mounted() {
+            this.$root.$on('seAnulaEnvio', () => this.seAnulaEnvio());
+
+            // AUTO-START LOGIC
+            if (this.localidadDetectada) {
+                this.envio = 'caba';
+                this.editandoUbicacion = false; 
+                
+                if (this.isDataReady) {
+                    this.triggerAutoStart();
+                } else {
+                    console.log("⏳ Esperando datos de zonas para calcular...");
+                }
+            } else {
+                this.editandoUbicacion = true;
+                if(this.envio === 'caba') this.initAutocomplete();
+            }
+        },
+        
+        methods: {
+            triggerAutoStart() {
+                const loc = this.localidadDetectada;
+                if (loc) {
+                    console.log("🚀 Ejecutando Auto-Start para:", loc);
+                    setTimeout(() => {
+                        this.resolveLocation(
+                            loc,
+                            this.ubicacionPreasignada.partidoName || '',
+                            this.ubicacionPreasignada.regionName || ''
+                        );
+                    }, 200);
+                }
+            },
+
+            loadCart() {
+                try { this.cart = JSON.parse(localStorage.getItem('cartQunuy')) || []; } 
+                catch(e) { this.cart = []; }
+                
+                this.pesoTotal = 0;
+                this.cantidadItems = 0;
+                
+                this.cart.forEach(item => {
+                    let qty = parseInt(item.cantidad) || 1;
+                    this.cantidadItems += qty;
+                    let w = parseFloat(item.weight || item.peso || 0);
+                    this.pesoTotal += (w * qty);
+                });
+
+                // Weight Logic
+                if (this.pesoTotal === 0 && this.cantidadItems > 0) {
+                    this.bultos = 1; 
+                } else {
+                    this.bultos = Math.ceil(this.pesoTotal / 30);
+                }
+                if(this.bultos < 1) this.bultos = 1;
+
+                // DYNAMIC COST UPDATE
+                if (this.unitShippingPrice > 0) {
+                    this.shippingCost = this.unitShippingPrice * this.bultos;
+                    this.recalcularTodo();
+                }
+
+                console.log(`📦 Peso Total: ${this.pesoTotal}kg | Bultos: ${this.bultos} | Costo: $${this.shippingCost}`);
+            },
+
+            activarEdicion() {
+                this.editandoUbicacion = true;
+                this.localidadManual = null; 
+                this.autocompleteInstance = null; 
+                this.$nextTick(() => this.initAutocomplete());
+            },
+
+            initAutocomplete() {
+                if (this.autocompleteInstance) return; 
+
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        const input = document.getElementById('google-autocomplete-cart');
+                        if (!input) {
+                            console.warn("Input de Google no encontrado. Abortando init.");
+                            return; 
+                        }
+                        if (!window.google || !window.google.maps) return;
+                        
+                        try {
+                            this.autocompleteInstance = new google.maps.places.Autocomplete(input, {
+                                types: ['geocode'],
+                                componentRestrictions: { country: 'ar' }
+                            });
+
+                            this.autocompleteInstance.addListener('place_changed', () => {
+                                const place = this.autocompleteInstance.getPlace();
+                                let city='', partido='', region='';
+                                if (place.address_components) {
+                                    for (const c of place.address_components) {
+                                        if (c.types.includes('locality')) city = c.long_name;
+                                        if (!city && c.types.includes('sublocality')) city = c.long_name;
+                                        if (c.types.includes('administrative_area_level_2')) partido = c.long_name;
+                                        if (c.types.includes('administrative_area_level_1')) region = c.long_name;
+                                    }
+                                }
+                                this.resolveLocation(city, partido, region);
+                            });
+                        } catch(e) { console.error("Map Init Error:", e); }
+                    }, 500);
+                });
+            },
+
+            resolveLocation(city, partido, region) {
+                // 1. RESET STATE
+                this.shippingCost = 0;
+                this.unitShippingPrice = 0; 
+                this.destinoId = 0;
+                this.$emit('update:costoEnvio', 0);
+                this.$emit('update:destinoId', 0);
+                this.loadingCost = true;
+                
+                this.localidadManual = city; 
+
+                const normalize = (str) => str ? str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
+                
+                const nCity = normalize(city || this.localidadDetectada);
+                const nPartido = normalize(partido);
+                const nRegion = normalize(region);
+
+                console.log(`🔎 Check: Ciudad=[${nCity}] | Partido=[${nPartido}]`);
+
+                // 2. BACKUP LIST (BLUE ZONE)
+                const backupList = [
+                    // ZONA 1 (Tarifa 1 - $5000)
+                    {n: "general san martin", id: 11}, {n: "san martin", id: 11},
+                    {n: "tres de febrero", id: 12}, {n: "3 de febrero", id: 12},
+                    {n: "vicente lopez", id: 13}, {n: "san isidro", id: 14},
+                    {n: "caba", id: 10}, {n: "capital federal", id: 10},
+                    {n: "ciudad autonoma de buenos aires", id: 10}, {n: "buenos aires", id: 10},
+                    {n: "ballester", id: 11}, {n: "villa ballester", id: 11},
+
+                    // ZONA 2 (Tarifa 2 - $6000)
+                    {n: "avellaneda", id: 20}, {n: "lanus", id: 21},
+                    {n: "lomas de zamora", id: 22}, {n: "la matanza", id: 23},
+                    {n: "moron", id: 24}, {n: "hurlingham", id: 25},
+                    {n: "ituzaingo", id: 26}, {n: "tigre", id: 30},
+                    {n: "san fernando", id: 31}, {n: "san miguel", id: 32},
+                    {n: "malvinas argentinas", id: 34},
+
+                    // ZONA 3 (Tarifa 3 - $7000)
+                    {n: "merlo", id: 35}, {n: "moreno", id: 36},
+                    {n: "quilmes", id: 43}, {n: "florencio varela", id: 45},
+                    {n: "ezeiza", id: 40}, {n: "jose c paz", id: 33},
+                    {n: "gregorio de laferrere", id: 37}, {n: "virrey del pino", id: 38},
+                    {n: "esteban echeverria", id: 41}, {n: "almirante brown", id: 42},
+                    {n: "berazategui", id: 44},
+
+                    // ZONA 4 (Tarifa 4 - $9000)
+                    {n: "general rodriguez", id: 48}, {n: "gral rodriguez", id: 48},
+                    {n: "pilar", id: 47}, {n: "escobar", id: 46},
+                    {n: "canuelas", id: 50}, {n: "la plata", id: 51},
+                    {n: "berisso", id: 52}, {n: "ensenada", id: 53},
+                    {n: "campana", id: 54}, {n: "lujan", id: 55}, {n: "zarate", id: 56},
+                    {n: "marcos paz", id: 49},
+                ];
+
+                // 3. ALLOWED ZONES (DB + BACKUP)
+                let allowedZones = [];
+                if (this.destinos2 && this.destinos2.length > 0) {
+                    allowedZones = this.destinos2.map(d => ({ name: normalize(d.nombre), id: d.id, source: 'DB' }));
+                }
+                
+                backupList.forEach(bk => {
+                    if (!allowedZones.find(az => az.name === bk.n)) {
+                        allowedZones.push({ name: bk.n, id: bk.id, source: 'BACKUP' });
+                    }
+                });
+
+                // 4. MATCHING
+                let match = allowedZones.find(z => z.name === nCity); 
+                if (!match && nPartido) {
+                    match = allowedZones.find(z => z.name === nPartido); 
+                    if (!match) { 
+                         if (nPartido.includes("3") || nPartido.includes("tres")) {
+                             match = allowedZones.find(z => z.name.includes("3 de febrero") || z.name.includes("tres de febrero"));
+                         }
+                    }
+                }
+
+                // 5. PRICING OR CONSULTAR
+                if (match) {
+                    console.log(`✅ Zona Permitida: ${match.name}`);
+                    this.destinoId = match.id;
+
+                    let basePrice = 0;
+                    const relation = this.destinozonas2.find(dz => dz.destino_id == match.id);
+                    
+                    if (relation) {
+                         const zone = this.zonas2.find(z => z.id == relation.zona_id);
+                         if (zone) basePrice = parseFloat(zone.precio || zone.costo || zone.tarifa || 0);
+                    }
+                    
+                    // FAILSAFE: Backup List Prices
+                    if (basePrice === 0) {
+                        const backupMatch = this.getBackupMatch(nCity) || this.getBackupMatch(nPartido);
+                        if (backupMatch) {
+                             const zid = Math.floor(backupMatch.id / 10);
+                             const RESCUE = { 1: 5000, 2: 5900, 3: 7000, 4: 9000, 5: 9000 };
+                             basePrice = RESCUE[zid] || 0;
+                             if(basePrice > 0) this.destinoId = 9999; 
+                        }
+                    }
+
+                    if (basePrice > 0) {
+                        this.unitShippingPrice = basePrice;
+                        this.loadCart();
+                        this.shippingCost = this.unitShippingPrice * this.bultos;
+                        
+                        console.log(`💰 Precio Final: $${this.shippingCost} (Unit: ${basePrice} x ${this.bultos})`);
+                        this.$emit('update:costoEnvio', this.shippingCost);
+                        this.$emit('update:destinoId', this.destinoId);
+                        this.editandoUbicacion = false; 
+
+                    } else {
+                         this.fetchPriceFromServer(city, partido, region);
+                         return;
+                    }
+
+                } else {
+                    console.warn(`⛔ FUERA DE ZONA (CONSULTAR): ${city} / ${partido}`);
+                    this.editandoUbicacion = false; 
+                }
+                
+                this.loadingCost = false;
+                this.recalcularTodo();
+            },
+
+            fetchPriceFromServer(city, partido, region) {
+                let token = document.head.querySelector('meta[name="csrf-token"]')?.content;
+                fetch('/web/gps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
+                    body: JSON.stringify({ manual_city: city, manual_partido: partido, manual_region: region })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.cost > 0) {
+                        this.unitShippingPrice = parseFloat(data.cost);
+                        this.loadCart();
+                        this.shippingCost = this.unitShippingPrice * this.bultos;
+                        this.destinoId = data.mapped_id || 0;
+                        this.$emit('update:costoEnvio', this.shippingCost);
+                        this.$emit('update:destinoId', this.destinoId);
+                        this.editandoUbicacion = false; 
+                        this.recalcularTodo();
+                    } else {
+                        this.editandoUbicacion = false; 
+                        this.recalcularTodo();
+                    }
+                })
+                .catch(() => {
+                    this.editandoUbicacion = false; 
+                    this.recalcularTodo();
+                });
+            },
+
+            recalcularTodo() {
+                if(this.envio == 'fabrica'){
+                    this.envio_total = this.costoEnvioFabrica || 0;
+                } else if(this.envio == 'caba'){
+                    this.envio_total = this.shippingCost || 0;
+                } else {
+                    this.envio_total = 0;
+                }
+                
+                let sub = parseFloat(this.subtotal) || 0;
+                let env = parseFloat(this.envio_total) || 0;
+                this.$emit('update:costoEnvio', env);
+                this.$emit('update:total', sub + env);    
+            },
+            
+            productos(){ window.location.href = this.rutaProductos; },
+            
+            seAnulaEnvio(){
+                this.anulaEnvio = false;
+                if(this.cart) {
+                    this.cart.forEach(item => {
+                        if (item.anulaEnvio == "1") {
+                            this.anulaEnvio = true;
+                            this.envio = 'fabrica';
+                        }
+                    });
+                }
+            },
+            
+            finalizar(){ 
+                // GUARD: Empty Cart
+                if (!this.cart || this.cart.length === 0) {
+                    console.log("🛒 Carrito vacío, bloqueando checkout.");
+                    Swal.fire('Atención', 'Agregue productos a su orden de compra para continuar', 'warning');
+                    return;
+                }
+
+                if(this.envio == "caba" && (this.shippingCost === 0 || !this.destinoId)){
+                    Swal.fire('Atención', 'Por favor ingrese una localidad válida para cotizar el envío.', 'warning');
+                } else {
+                    this.$emit('update:step', 1);
+                    this.$emit('update:envio2', this.envio);
+                }
+            },
+
+            getBackupMatch(name) {
+                if (!name) return null;
+                const normalize = (str) => str ? str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() : "";
+                const backupList = [
+                    // ZONA 1 (Tarifa 1 - $5000)
+                    {n: "general san martin", id: 11}, {n: "san martin", id: 11},
+                    {n: "tres de febrero", id: 12}, {n: "3 de febrero", id: 12},
+                    {n: "vicente lopez", id: 13}, {n: "san isidro", id: 14},
+                    {n: "caba", id: 10}, {n: "capital federal", id: 10},
+                    {n: "ciudad autonoma de buenos aires", id: 10}, {n: "buenos aires", id: 10},
+                    {n: "ballester", id: 11}, {n: "villa ballester", id: 11},
+
+                    // ZONA 2 (Tarifa 2 - $6000)
+                    {n: "avellaneda", id: 20}, {n: "lanus", id: 21},
+                    {n: "lomas de zamora", id: 22}, {n: "la matanza", id: 23},
+                    {n: "moron", id: 24}, {n: "hurlingham", id: 25},
+                    {n: "ituzaingo", id: 26}, {n: "tigre", id: 30},
+                    {n: "san fernando", id: 31}, {n: "san miguel", id: 32},
+                    {n: "malvinas argentinas", id: 34},
+
+                    // ZONA 3 (Tarifa 3 - $7000)
+                    {n: "merlo", id: 35}, {n: "moreno", id: 36},
+                    {n: "quilmes", id: 43}, {n: "florencio varela", id: 45},
+                    {n: "ezeiza", id: 40}, {n: "jose c paz", id: 33},
+                    {n: "gregorio de laferrere", id: 37}, {n: "virrey del pino", id: 38},
+                    {n: "esteban echeverria", id: 41}, {n: "almirante brown", id: 42},
+                    {n: "berazategui", id: 44},
+
+                    // ZONA 4 (Tarifa 4 - $9000)
+                    {n: "general rodriguez", id: 48}, {n: "gral rodriguez", id: 48},
+                    {n: "pilar", id: 47}, {n: "escobar", id: 46},
+                    {n: "canuelas", id: 50}, {n: "la plata", id: 51},
+                    {n: "berisso", id: 52}, {n: "ensenada", id: 53},
+                    {n: "campana", id: 54}, {n: "lujan", id: 55}, {n: "zarate", id: 56},
+                    {n: "marcos paz", id: 49},
+                ];
+                return backupList.find(b => b.n === normalize(name));
+            }
+        }
+    }
+</script>
+
+<style lang="scss" scoped>
+    .section-envio{
+        padding:0px 22px 39px 22px;
+    }
+    hr{
+        border: 0.5px solid rgba(143, 134, 110, 0.3);
+    }
+    .fila{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top:13px;
+    }
+    
+    /* BUTTONS PHOTO 2 STYLE */
+    .btn-solid {
+        text-align: center;
+        font: normal normal bold 14px/17px Open Sans;
+        letter-spacing: 0.56px;
+        color: #FFFFFF;
+        background: #FD914D;
+        border: 1px solid #FD914D;
+        border-radius: 8px;
+        padding: 11px 0;
+        width: 100%;
+        cursor: pointer;
+        display: block;
+        text-transform: uppercase; 
+    }
+
+    /* CUSTOM RADIO BUTTONS */
+    input[type="radio"] {
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: #fff;
+        margin: 0;
+        font: inherit;
+        color: currentColor;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #FD914D;
+        border-radius: 50%;
+        display: grid;
+        place-content: center;
+        cursor: pointer;
+        margin-right: 8px;
+        flex-shrink: 0;
+    }
+
+    input[type="radio"]::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em #FD914D;
+        background-color: #FD914D;
+    }
+
+    input[type="radio"]:checked::before {
+        transform: scale(1);
+    }
+    
+    input[type="radio"]:focus {
+        outline: none;
+    }
+    
+    @media screen and (max-width: 800px) {
+        .section-envio { padding: 0px 15px 20px 15px !important; }
+    }
+</style>

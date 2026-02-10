@@ -1,0 +1,638 @@
+@extends('layouts.plantilla')
+
+@section('title', 'Ferrindep')
+
+@section('content')
+
+  <div class="video-header-container"
+    style="position: relative; width: 100%; background-color: #000; overflow: hidden; display: block; margin:0; padding:0;">
+    {{--
+    TIP: Para el video final, reemplaza 'ruta/al/video.mp4' con la ubicación real del archivo.
+    Por ahora, está configurado para un video en loop fijo.
+    --}}
+    <video id="header-video" autoplay muted playsinline poster="{{ asset('img/video-poster.jpg') }}"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; border:none; outline:none; z-index: 1;">
+      <source src="{{ asset('videos/vid1.mp4') }}" type="video/mp4">
+    </video>
+  </div>
+  <div class="data-home d-none d-md-flex">
+    <div class="container">
+      <div class="row">
+        <div class="col-4" style="display:flex">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 col-lg-4 mt-4 mt-md-0">
+                <img src="{{asset(Storage::url($home->seccion_foto1))}}">
+              </div>
+              <div class="col-12 col-lg-8 d-md-flex flex-wrap text-center text-md-left mt-2 mt-lg-0 home-mobile">
+                <h3>{{$home->seccion_titulo1}}</h3>
+                <h5>{{$home->seccion_texto1}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4" style="display:flex">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 col-lg-4 mt-4 mt-md-0 home-mobile">
+                <img src="{{asset(Storage::url($home->seccion_foto2))}}">
+              </div>
+              <div class="col-12 col-lg-8 d-md-flex flex-wrap text-center text-md-left mt-2 mt-lg-0 home-mobile">
+                <h3>{{$home->seccion_titulo2}}</h3>
+                <h5>{{$home->seccion_texto2}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-4" style="display:flex">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12 col-lg-4 mt-4 mt-md-0 home-mobile">
+                <img src="{{asset(Storage::url($home->seccion_foto3))}}">
+              </div>
+              <div class="col-12 col-lg-8 d-md-flex flex-wrap text-center text-md-left mt-2 mt-lg-0 home-mobile"
+                style="padding:0;">
+                <h3>{{$home->seccion_titulo3}}</h3>
+                <h5>{{$home->seccion_texto3}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="margin: 20px auto 15px;">
+    <div class="card p-3 p-md-4 shadow-sm" style="border: none; background-color: #f8f9fa;">
+
+      <h5 class="text-center"
+        style="margin-bottom: 20px; font-weight: bold; color: #444; font-size: 1.2rem; font-family: 'Open Sans', sans-serif;">
+        Buscador r&aacute;pido
+      </h5>
+
+      <div class="d-flex justify-content-center mb-3 mb-md-4">
+        <div class="btn-group" role="group" style="width: 100%; max-width: 500px;">
+
+          <button type="button" class="btn btn-outline-primary active px-1 px-md-4 py-2 btn-familia" data-familia-id="1"
+            style="font-weight: 600; border-radius: 20px 0 0 20px; font-size: 13px; line-height: 1.2;">
+            <span class="d-none d-md-inline" style="font-size: 16px;">Mallas Electrosoldadas</span>
+            <span class="d-inline d-md-none">Mallas<br>Electrosoldadas</span>
+          </button>
+
+          <button type="button" class="btn btn-outline-primary px-1 px-md-4 py-2 btn-familia" data-familia-id="2"
+            style="font-weight: 600; border-radius: 0 20px 20px 0; font-size: 13px; line-height: 1.2;">
+            <span class="d-none d-md-inline" style="font-size: 16px;">Metal Desplegado</span>
+            <span class="d-inline d-md-none">Metal<br>Desplegado</span>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+    <h4 id="titulo-familia" class="text-center mt-2 mb-3"
+      style="font-weight: 700; color: #0d6efd; font-family: 'Open Sans', sans-serif;">
+      Mallas Electrosoldadas
+    </h4>
+
+
+    <form id="form-filtros">
+      <div class="row g-2 g-md-3">
+
+        <div class="col-6 col-md-3">
+          <label class="form-label text-muted font-weight-bold small mb-1">ANCHO DEL ROLLO</label>
+          <select id="filtro-ancho" class="form-select form-select-sm filtro-select">
+            <option value="" data-familia="all">Seleccionar</option>
+            @foreach($anchos as $ancho)
+              @php
+                $val = intval($ancho->nombre);
+                $texto = ($val >= 100) ? ($val / 100) . ' m' : $val . ' cm';
+              @endphp
+              <option value="{{ $ancho->id }}" data-familia="{{ $ancho->familia_id }}">{{ $texto }}</option>
+            @endforeach
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label text-muted font-weight-bold small mb-1">MEDIDA</label>
+          <select id="filtro-medida" class="form-select form-select-sm filtro-select">
+            <option value="" data-familia="all">Seleccionar</option>
+            @foreach($medidas as $medida)
+              <option value="{{ $medida->id }}" data-familia="{{ $medida->familia_id }}">{{ $medida->medidas }}</option>
+            @endforeach
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label id="label-espesor" class="form-label text-muted font-weight-bold small mb-1">ESPESOR (Alambre)</label>
+          <select id="filtro-espesor" class="form-select form-select-sm filtro-select">
+            <option value="" data-familia="all">Seleccionar</option>
+            @foreach($espesores as $espesor)
+              <option value="{{ $espesor->id }}" data-familia="{{ $espesor->familia_id }}">{{ $espesor->espesor }}</option>
+            @endforeach
+          </select>
+        </div>
+
+        <div class="col-6 col-md-3 d-flex align-items-end">
+          <button type="button" id="btn-limpiar-filtros" class="btn btn-outline-secondary btn-sm w-100">
+            Limpiar
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <div id="msg-sin-resultados" class="alert alert-warning mt-3 d-none text-center py-2 small">
+    No encontramos productos con esa combinaci&oacute;n en la familia seleccionada.
+  </div>
+  </div>
+  <section class="section-home-categorias section-categoria" style="margin-bottom:58px;">
+    <div class="container" style="margin-top:60px;">
+      <div id="grid-productos" class="row">
+
+        @php
+          $mlGo = [1 => '/go/ml/10x10-30', 40 => '/go/ml/15x15-30', 54 => '/go/ml/25x25-30'];
+          $mlFallback = '/go/ml/tienda';
+          $destacarTodos = true;
+        @endphp
+
+        @php $previousWidth = null; @endphp
+        @foreach ($productos as $item)
+          @if ($item->destacado && $item->show)
+
+            @php
+              $currentWidth = $item->categoria->con_nombre ? $item->categoria->nombre : (intval($item->categoria->nombre) >= 100 ? $item->categoria->nombre / 100 . ' m ancho' : $item->categoria->nombre . ' cm ancho');
+            @endphp
+
+            @if ($currentWidth != $previousWidth)
+              <div class="header-mobile-categoria d-flex d-md-none col-12 align-items-center"
+                style="background:#2c3e50; margin-top:20px; margin-bottom:20px; padding:12px 20px; font-weight:700; color:#fff; border-radius:6px; gap:12px; font-size:1.1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                  <path d="M4 12h16m0 0l-4-4m4 4l-4 4M4 12l4-4m-4 4l4 4" />
+                </svg>
+                <span>Rollos {{ $currentWidth }}</span>
+              </div>
+              @php $previousWidth = $currentWidth; @endphp
+            @endif
+
+            <div class="card-buscable d-none d-md-flex col-md-3" style="margin-bottom:40px;"
+              data-familia="{{ $item->familia_id }}" data-ancho="{{ $item->categoria_id }}"
+              data-medida="{{ $item->medida_id }}" data-espesor="{{ $item->espesor_id }}">
+
+              <div style="border:1px solid rgba(143,134,110,.3); padding:8px; width:100%; height:100%;">
+                <a href="{{ route('web.productos.producto', $item) }}" style="text-decoration:none">
+                  <div class="img-border-categorias img-active"
+                    style="background-image:url({{asset(Storage::url($item->imagen))}});">
+                    @if($item->oferta)
+                      <div class="oferta">OFERTA</div>
+                    @endif
+                  </div>
+                  <hr>
+                  <div class="text-box-categorias">
+                    <div class="tabla-trabajo" style="font:normal 11px/16px Open Sans;color:#000;margin-top:0;">
+                      <span style="font-size:120%">{{ $item->familia->nombre }}</span>
+                    </div>
+
+                    @if ($item->con_nombre)
+                      <div class="tabla-trabajo" style="font: normal normal bold 18px/28px Open Sans; color: black;">
+                        {{$item->nombre}}
+                      </div>
+                    @else
+                      <div class="tabla-trabajo" style="font: normal normal bold 18px/28px Open Sans; color: black;">
+                        {{$item->medidas->medidas}} {{$item->espesor->espesor}}
+                      </div>
+                    @endif
+
+                    <div class="tabla-trabajo"
+                      style="font: normal normal bold 12px/17px Open Sans; color:#939292; margin-top:0;">
+                      <span style="font-size:120%">
+                        {{$item->categoria->con_nombre ? $item->categoria->nombre : (intval($item->categoria->nombre) >= 100 ? $item->categoria->nombre / 100 . ' m alto/ancho' : $item->categoria->nombre . ' cm alto/ancho') }}
+                      </span>
+                    </div>
+
+                    <hr>
+                    <desde-categorias desc-efectivo="{{$configuracionPedidos->descuento_efectivo}}"
+                      desc-transferencia="{{$configuracionPedidos->descuento_transferencia}}"
+                      desc-mp="{{$configuracionPedidos->descuento_mp}}" vendidos="{{$item->vendidos}}"
+                      presentaciones="{{ $item->presentaciones }}" oferta="{{$item->oferta}}"
+                      con-nombre="{{$item->con_nombre}}" />
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="card-buscable d-flex d-md-none col-12" style="margin-bottom:0; padding:0;"
+              data-familia="{{ $item->familia_id }}" data-ancho="{{ $item->categoria_id }}"
+              data-medida="{{ $item->medida_id }}" data-espesor="{{ $item->espesor_id }}">
+
+              <div style="border:1px solid rgba(143,134,110,.3); padding:7px 0; width:100%; height:100%;">
+                <a href="{{ route('web.productos.producto', $item) }}" style="text-decoration:none">
+                  <div class="row">
+                    <div class="col-4">
+                      <div class="img-border-categorias img-active"
+                        style="background-image:url({{asset(Storage::url($item->imagen))}});">
+                        @if($item->oferta)
+                          <div class="oferta">OFERTA</div>
+                        @endif
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="text-box-categorias"
+                        style="display:flex; flex-direction:column; height:100%;
+                                                                                                                                            justify-content: {{ $destacarTodos ? 'flex-start' : 'space-between' }};">
+
+                        <div class="tabla-trabajo" style="font:normal 11px/16px Open Sans;color:#000;margin-top:0;">
+                          <span style="font-size:120%">{{ $item->familia->nombre }}</span>
+                        </div>
+
+                        <div>
+                          @if ($item->con_nombre)
+                            <div class="tabla-trabajo"
+                              style="color:#000; font-weight:700 !important; font-size:18px !important; line-height:24px !important;">
+                              {{$item->nombre}}
+                            </div>
+                          @else
+                            <div class="tabla-trabajo"
+                              style="color:#000; font-weight:700 !important; font-size:18px !important; line-height:24px !important;">
+                              {{$item->medidas->medidas}} {{$item->espesor->espesor}}
+                            </div>
+                          @endif
+
+                          <div class="tabla-trabajo"
+                            style="color:#939292; margin-top:2px; font-weight:700 !important; font-size:14px !important; line-height:18px !important;">
+                            <span>
+                              {{$item->categoria->con_nombre ? $item->categoria->nombre : (intval($item->categoria->nombre) >= 100 ? $item->categoria->nombre / 100 . ' m ancho' : $item->categoria->nombre . ' cm ancho') }}
+                            </span>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                @php
+                  $mlHref = $mlGo[$item->id] ?? $mlFallback;
+                @endphp
+
+                <div class="d-flex d-md-none"
+                  style="padding:0 12px; margin-top:6px; gap:6px; flex-wrap:nowrap; justify-content:flex-start;">
+                  <a href="{{ route('web.productos.producto', $item) }}"
+                    style="background:#16A34A; color:#fff; padding:6px 12px; border-radius:999px; text-decoration:none; font-weight:600; font-size:12px; line-height:1; white-space:nowrap; display:inline-flex; align-items:center;">
+                    ver en Ferrindep
+                  </a>
+                  <a href="{{ $mlHref }}" target="_blank" rel="noopener"
+                    style="background:#FFE600; color:#111827; padding:6px 12px; border-radius:999px; text-decoration:none; font-weight:600; font-size:12px; line-height:1; white-space:nowrap; display:inline-flex; align-items:center;">
+                    ver en MercadoLibre
+                    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"
+                      style="margin-left:6px; flex:0 0 14px;">
+                      <circle cx="12" cy="12" r="10" fill="#2E7DFF" />
+                      <path d="M7.5 12.5l3 3 6-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+
+          @endif
+        @endforeach
+
+      </div>
+
+
+
+    </div>
+  </section>
+
+  <div class="col-12 video">
+    <iframe width="100%" height="600px"
+      src="https://www.youtube.com/embed/{{$home->video}}?loop=1&autoplay=1&playlist={{$home->video}}"
+      title="YouTube video player" frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen></iframe>
+  </div>
+
+@endsection
+
+{{-- =========================================================
+SCRIPT Y ESTILOS DE FILTRADO
+========================================================= --}}
+@section('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // === REFERENCIAS DOM ===
+      const selectAncho = document.getElementById('filtro-ancho');
+      const selectMedida = document.getElementById('filtro-medida');
+      const selectEspesor = document.getElementById('filtro-espesor');
+      const labelEspesor = document.getElementById('label-espesor');
+      const btnLimpiar = document.getElementById('btn-limpiar-filtros');
+      const msgSinResult = document.getElementById('msg-sin-resultados');
+      const btnsFamilia = document.querySelectorAll('.btn-familia');
+      const cards = document.querySelectorAll('.card-buscable');
+
+      // Token de seguridad de Laravel (Necesario para enviar datos)
+      const csrfToken = "{{ csrf_token() }}";
+
+      // Estado inicial
+      let familiaActiva = '1';
+      let timeoutChismoso = null; // Para el temporizador del espa
+
+      // ======================================================
+      // "97"1'5?69"1'5 EL CHISMOSO: Funcin para guardar bsquedas
+      // ======================================================
+      function activarElChismoso() {
+        // 1. Si ya haba un envo pendiente, lo cancelamos (reinicia el reloj)
+        clearTimeout(timeoutChismoso);
+
+        // 2. Esperamos 3 segundos antes de guardar (Debounce)
+        timeoutChismoso = setTimeout(() => {
+
+          // Validamos que haya seleccionado al menos ALGO (para no guardar vacos)
+          if (selectAncho.value === '' && selectMedida.value === '' && selectEspesor.value === '') {
+            return; // Si no eligi nada, no guardamos.
+          }
+
+          // 3. Preparamos los datos
+          // Sacamos el TEXTO de la opcin seleccionada (ej: "10 x 10 mm"), no el ID
+          const textoAncho = selectAncho.selectedIndex > 0 ? selectAncho.options[selectAncho.selectedIndex].text : null;
+          const textoMedida = selectMedida.selectedIndex > 0 ? selectMedida.options[selectMedida.selectedIndex].text : null;
+          const textoEspesor = selectEspesor.selectedIndex > 0 ? selectEspesor.options[selectEspesor.selectedIndex].text : null;
+          const nombreFamilia = (familiaActiva == '1') ? 'Mallas Electrosoldadas' : 'Metal Desplegado';
+
+          // 4. Enviamos los datos al servidor (AJAX)
+          fetch('/guardar-busqueda', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({
+              familia: nombreFamilia,
+              ancho_texto: textoAncho,
+              medida_texto: textoMedida,
+              espesor_texto: textoEspesor
+            })
+          })
+            .then(response => {
+              // Si quieres ver en la consola si funcion (F12):
+              // console.log("Chismoso reportando: Guardado con xito."); 
+            })
+            .catch(error => console.error('Error del chismoso:', error));
+
+        }, 3000); // 3000 ms = 3 segundos de espera
+      }
+
+
+      // ======================================================
+      // ?75"1'5 L?0^7GICA DE FILTRADO (Visual)
+      // ======================================================
+
+      function filtrarOpcionesDesplegables() {
+        const selects = [selectAncho, selectMedida, selectEspesor];
+        selects.forEach(sel => {
+          const opciones = sel.querySelectorAll('option');
+          opciones.forEach(opt => {
+            const fam = opt.getAttribute('data-familia');
+            if (fam === 'all') {
+              opt.style.display = '';
+              return;
+            }
+            // Nota: Usamos '==' para que coincida string con numero
+            if (fam == familiaActiva) {
+              opt.style.display = '';
+              opt.disabled = false;
+            } else {
+              opt.style.display = 'none';
+              opt.disabled = true;
+            }
+          });
+          // Resetear si la opcin elegida qued oculta
+          const opcionActual = sel.options[sel.selectedIndex];
+          if (opcionActual && opcionActual.getAttribute('data-familia') !== 'all' && opcionActual.getAttribute('data-familia') != familiaActiva) {
+            sel.value = '';
+          }
+        });
+      }
+
+      function aplicarFiltros() {
+        const valAncho = selectAncho.value;
+        const valMedida = selectMedida.value;
+        const valEspesor = selectEspesor.value;
+        let visibles = 0;
+
+        cards.forEach(card => {
+          const cardFamilia = card.getAttribute('data-familia');
+          const cardAncho = card.getAttribute('data-ancho');
+          const cardMedida = card.getAttribute('data-medida');
+          const cardEspesor = card.getAttribute('data-espesor');
+
+          const matchFamilia = (cardFamilia == familiaActiva);
+          const matchAncho = (valAncho === '' || valAncho === cardAncho);
+          const matchMedida = (valMedida === '' || valMedida === cardMedida);
+          const matchEspesor = (valEspesor === '' || valEspesor === cardEspesor);
+
+          if (matchFamilia && matchAncho && matchMedida && matchEspesor) {
+            card.classList.remove('filtro-oculto');
+            if (card.classList.contains('col-md-3')) {
+              card.classList.add('d-md-flex');
+            } else {
+              card.classList.add('d-flex');
+            }
+            visibles++;
+          } else {
+            card.classList.add('filtro-oculto');
+            card.classList.remove('d-flex', 'd-md-flex');
+          }
+        });
+
+        // 2. Filtrar Headers (Lógica adicional para ocultar separadores vacíos)
+        const container = document.getElementById('grid-productos');
+        let currentHeader = null;
+
+        // Iteramos sobre los hijos directos para respetar el orden DOM
+        Array.from(container.children).forEach(child => {
+          // Caso: Es un Header
+          if (child.classList.contains('header-mobile-categoria')) {
+            currentHeader = child;
+            // Por defecto lo ocultamos, hasta encontrar un producto visible
+            child.classList.add('filtro-oculto');
+            child.classList.remove('d-flex');
+          }
+          // Caso: Es una Card de producto
+          else if (child.classList.contains('card-buscable')) {
+            // Si la card es visible...
+            if (!child.classList.contains('filtro-oculto')) {
+              // ...y tenemos un header pendiente de mostrar
+              if (currentHeader) {
+                currentHeader.classList.remove('filtro-oculto');
+                currentHeader.classList.add('d-flex');
+                // Ya mostramos el header de este grupo, no necesitamos activarlo de nuevo
+                currentHeader = null;
+              }
+            }
+          }
+        });
+
+        if (visibles === 0) {
+          msgSinResult.classList.remove('d-none');
+        } else {
+          msgSinResult.classList.add('d-none');
+        }
+
+        // ?72 ?0"3AQU?0^1 ACTIVAMOS AL ESP?0^1A! Cada vez que se filtra, preparamos el reporte.
+        activarElChismoso();
+      }
+
+      // --- EVENTOS ---
+      // --- L?0^7GICA DE LOS BOTONES DE FAMILIA ---
+      btnsFamilia.forEach(btn => {
+        btn.addEventListener('click', function () {
+          // 1. Obtenemos la familia seleccionada
+          familiaActiva = this.getAttribute('data-familia-id');
+
+          // 2. Visual botones (Pintar el activo)
+          btnsFamilia.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+
+          // 3. CAMBIO DE TEXTOS (Ttulo y Label)
+          const tituloFamilia = document.getElementById('titulo-familia');
+
+          if (familiaActiva == '1') {
+            // Si es Mallas
+            labelEspesor.textContent = 'ESPESOR (Alambre)';
+            tituloFamilia.textContent = 'Mallas Electrosoldadas'; // <--- CAMBIO AQU?0^1
+          } else {
+            // Si es Metal
+            labelEspesor.textContent = 'ESPESOR';
+            tituloFamilia.textContent = 'Metal Desplegado'; // <--- CAMBIO AQU?0^1
+          }
+
+          // 4. Filtrar opciones de los desplegables
+          filtrarOpcionesDesplegables();
+
+          // 5. Resetear valores y aplicar
+          selectAncho.value = '';
+          selectMedida.value = '';
+          selectEspesor.value = '';
+          aplicarFiltros();
+        });
+      });
+
+      const selects = [selectAncho, selectMedida, selectEspesor];
+      selects.forEach(sel => sel.addEventListener('change', aplicarFiltros));
+
+      btnLimpiar.addEventListener('click', function () {
+        selectAncho.value = '';
+        selectMedida.value = '';
+        selectEspesor.value = '';
+        aplicarFiltros();
+      });
+
+      // Inicializacin
+      filtrarOpcionesDesplegables();
+      // Ejecutamos una vez sin activar el chismoso (para que cargue limpio)
+      // aplicarFiltros llama al chismoso, pero como los valores estn vacos, el chismoso no guarda nada.
+      aplicarFiltros();
+    });
+  </script>
+
+  <style>
+    .filtro-oculto {
+      display: none !important;
+    }
+
+    /* Estilos del candado (Selects) */
+    #filtro-ancho,
+    #filtro-medida,
+    #filtro-espesor {
+      font-weight: 400 !important;
+      font-family: 'Open Sans', sans-serif !important;
+      color: #555 !important;
+      border: 1px solid #ced4da !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    #filtro-ancho option,
+    #filtro-medida option,
+    #filtro-espesor option {
+      font-weight: 400 !important;
+    }
+
+    /* Estilos Header Video Responsivo */
+    .video-header-container {
+      height: clamp(250px, 55vh, 700px);
+    }
+
+    @media (max-width: 768px) {
+      .video-header-container {
+        /* Altura reducida en móvil para mostrar buscador */
+        height: 35vh;
+        min-height: 200px;
+        /* Evitar que sea demasiado chico */
+      }
+    }
+  </style>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const videoElement = document.getElementById('header-video');
+
+      // 1. Definir las dos listas de reproducción
+      const playlistDesktop = [
+        "{{ asset('videos/vid1.mp4') }}",
+        "{{ asset('videos/vid2.mp4') }}",
+        "{{ asset('videos/vid3.mp4') }}",
+        "{{ asset('videos/vid4.mp4') }}",
+        "{{ asset('videos/vid5.mp4') }}",
+        "{{ asset('videos/vid6.mp4') }}",
+        "{{ asset('videos/vid7.mp4') }}",
+        "{{ asset('videos/vid8.mp4') }}"
+      ];
+
+      const playlistMobile = [
+        "{{ asset('videos/vid1-mobile.mp4') }}",
+        "{{ asset('videos/vid2-mobile.mp4') }}",
+        "{{ asset('videos/vid3-mobile.mp4') }}",
+        "{{ asset('videos/vid4-mobile.mp4') }}",
+        "{{ asset('videos/vid5-mobile.mp4') }}",
+        "{{ asset('videos/vid6-mobile.mp4') }}",
+        "{{ asset('videos/vid7-mobile.mp4') }}"
+      ];
+
+      // 2. Determinar qué lista usar según el ancho de pantalla
+      const isMobile = window.innerWidth < 768;
+      const activePlaylist = isMobile ? playlistMobile : playlistDesktop;
+
+      let currentVideoIndex = 0;
+
+      if (videoElement) {
+        // Cargar el primer video correcto al iniciar
+        videoElement.src = activePlaylist[0];
+        // videoElement.play(); // El autoplay del HTML se encarga, pero al cambiar src dinámicamente puede pausarse.
+        // Forzar play por si acaso el navegador lo detiene al cambiar src
+        videoElement.play().catch(e => { /* Autoplay policies */ });
+
+        // Al terminar un video, pasar al siguiente de la lista activa
+        videoElement.addEventListener('ended', function () {
+          currentVideoIndex++;
+          if (currentVideoIndex >= activePlaylist.length) {
+            currentVideoIndex = 0; // Volver al primero (Loop general)
+          }
+
+          // Cambiar el src y reproducir
+          videoElement.src = activePlaylist[currentVideoIndex];
+          videoElement.play().catch(e => console.error("Error al reproducir video:", e));
+        });
+      }
+    });
+  </script>
+
+@endsection

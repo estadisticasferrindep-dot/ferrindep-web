@@ -1,0 +1,396 @@
+
+> dev
+> npm run development
+
+
+> development
+> mix
+
+i Compiling Mix
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+5 │ @import 'variables';
+  │         ^^^^^^^^^^^
+  ╵
+    resources\sass\app.scss 5:9  root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+8 │ @import '~bootstrap/scss/bootstrap';
+  │         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  ╵
+    resources\sass\app.scss 8:9  root stylesheet
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+8 │ @import "functions";
+  │         ^^^^^^^^^^^
+  ╵
+    node_modules\bootstrap\scss\bootstrap.scss 8:9  @import
+    resources\sass\app.scss 8:9                     root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+  ╷
+9 │ @import "variables";
+  │         ^^^^^^^^^^^
+  ╵
+    node_modules\bootstrap\scss\bootstrap.scss 9:9  @import
+    resources\sass\app.scss 8:9                     root stylesheet
+
+DEPRECATION WARNING [import]: Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+10 │ @import "mixins";
+   │         ^^^^^^^^
+   ╵
+    node_modules\bootstrap\scss\bootstrap.scss 10:9  @import
+    resources\sass\app.scss 8:9                      root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($level > 0): $black; else: $white)
+
+More info: https://sass-lang.com/d/if-function
+
+    ╷
+103 │   $color-base: if($level > 0, $black, $white);
+    │                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_functions.scss 103:16  @import
+    node_modules\bootstrap\scss\bootstrap.scss 8:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($return-calc == true): calc(#{$value1} + #{$value2}); else: $value1 + unquote(" + ") + $value2)
+
+More info: https://sass-lang.com/d/if-function
+
+    ╷
+123 │   @return if($return-calc == true, calc(#{$value1} + #{$value2}), $value1 + unquote(" + ") + $value2);
+    │           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_functions.scss 123:11  @import
+    node_modules\bootstrap\scss\bootstrap.scss 8:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($return-calc == true): calc(#{$value1} - #{$value2}); else: $value1 + unquote(" - ") + $value2)
+
+More info: https://sass-lang.com/d/if-function
+
+    ╷
+147 │   @return if($return-calc == true, calc(#{$value1} - #{$value2}), $value1 + unquote(" - ") + $value2);
+    │           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_functions.scss 147:11  @import
+    node_modules\bootstrap\scss\bootstrap.scss 8:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0): 1; else: -1)
+
+More info: https://sass-lang.com/d/if-function
+
+    ╷
+151 │   $sign: if($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0, 1, -1);
+    │          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_functions.scss 151:10  @import
+    node_modules\bootstrap\scss\bootstrap.scss 8:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.merge instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+21 │   $grays: map-merge(
+   │ ┌─────────^
+22 │ │   (
+23 │ │     "100": $gray-100,
+24 │ │     "200": $gray-200,
+25 │ │     "300": $gray-300,
+26 │ │     "400": $gray-400,
+27 │ │     "500": $gray-500,
+28 │ │     "600": $gray-600,
+29 │ │     "700": $gray-700,
+30 │ │     "800": $gray-800,
+31 │ │     "900": $gray-900
+32 │ │   ),
+33 │ │   $grays
+34 │ │ );
+   │ └─^
+   ╵
+    node_modules\bootstrap\scss\_variables.scss 21:9  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9    @import
+    resources\sass\app.scss 8:9                       root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.merge instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+48 │   $colors: map-merge(
+   │ ┌──────────^
+49 │ │   (
+50 │ │     "blue":       $blue,
+51 │ │     "indigo":     $indigo,
+52 │ │     "purple":     $purple,
+53 │ │     "pink":       $pink,
+54 │ │     "red":        $red,
+55 │ │     "orange":     $orange,
+56 │ │     "yellow":     $yellow,
+57 │ │     "green":      $green,
+58 │ │     "teal":       $teal,
+59 │ │     "cyan":       $cyan,
+60 │ │     "white":      $white,
+61 │ │     "gray":       $gray-600,
+62 │ │     "gray-dark":  $gray-800
+63 │ │   ),
+64 │ │   $colors
+65 │ │ );
+   │ └─^
+   ╵
+    node_modules\bootstrap\scss\_variables.scss 48:10  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9     @import
+    resources\sass\app.scss 8:9                        root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.merge instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+   ╷
+77 │   $theme-colors: map-merge(
+   │ ┌────────────────^
+78 │ │   (
+79 │ │     "primary":    $primary,
+80 │ │     "secondary":  $secondary,
+81 │ │     "success":    $success,
+82 │ │     "info":       $info,
+83 │ │     "warning":    $warning,
+84 │ │     "danger":     $danger,
+85 │ │     "light":      $light,
+86 │ │     "dark":       $dark
+87 │ │   ),
+88 │ │   $theme-colors
+89 │ │ );
+   │ └─^
+   ╵
+    node_modules\bootstrap\scss\_variables.scss 77:16  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9     @import
+    resources\sass\app.scss 8:9                        root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.merge instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+138 │   $spacers: map-merge(
+    │ ┌───────────^
+139 │ │   (
+140 │ │     0: 0,
+141 │ │     1: ($spacer * .25),
+142 │ │     2: ($spacer * .5),
+143 │ │     3: $spacer,
+144 │ │     4: ($spacer * 1.5),
+145 │ │     5: ($spacer * 3)
+146 │ │   ),
+147 │ │   $spacers
+148 │ │ );
+    │ └─^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 138:11  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [global-builtin]: Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+Use map.merge instead.
+
+More info and automated migrator: https://sass-lang.com/d/import
+
+    ╷
+152 │   $sizes: map-merge(
+    │ ┌─────────^
+153 │ │   (
+154 │ │     25: 25%,
+155 │ │     50: 50%,
+156 │ │     75: 75%,
+157 │ │     100: 100%,
+158 │ │     auto: auto
+159 │ │   ),
+160 │ │   $sizes
+161 │ │ );
+    │ └─^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 152:9  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9     @import
+    resources\sass\app.scss 8:9                        root stylesheet
+
+DEPRECATION WARNING [color-functions]: darken() is deprecated. Suggestions:
+
+color.scale($color, $lightness: -28.125%)
+color.adjust($color, $lightness: -15%)
+
+More info: https://sass-lang.com/d/color-functions
+
+    ╷
+178 │ $link-hover-color:                        darken($link-color, 15%) !default;
+    │                                           ^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 178:43  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 9.7081218274%)
+color.adjust($color, $lightness: 7.5%)
+
+More info: https://sass-lang.com/d/color-functions
+
+    ╷
+374 │ $table-dark-border-color:     lighten($table-dark-bg, 7.5%) !default;
+    │                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 374:31  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 53.5714285714%)
+color.adjust($color, $lightness: 25%)
+
+More info: https://sass-lang.com/d/color-functions
+
+    ╷
+487 │ $input-focus-border-color:              lighten($component-active-bg, 25%) !default;
+    │                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 487:41  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 75%)
+color.adjust($color, $lightness: 35%)
+
+More info: https://sass-lang.com/d/color-functions
+
+    ╷
+552 │ $custom-control-indicator-active-bg:            lighten($component-active-bg, 35%) !default;
+    │                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 552:49  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [color-functions]: lighten() is deprecated. Suggestions:
+
+color.scale($color, $lightness: 75%)
+color.adjust($color, $lightness: 35%)
+
+More info: https://sass-lang.com/d/color-functions
+
+    ╷
+627 │ $custom-range-thumb-active-bg:               lighten($component-active-bg, 35%) !default;
+    │                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ╵
+    node_modules\bootstrap\scss\_variables.scss 627:46  @import
+    node_modules\bootstrap\scss\bootstrap.scss 9:9      @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [if-function]: The Sass if() syntax is deprecated in favor of the modern CSS syntax.
+
+Suggestion: if(sass($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0): 1; else: -1)
+
+More info: https://sass-lang.com/d/if-function
+
+   ╷
+53 │   $sign: if($dividend > 0 and $divisor > 0 or $dividend < 0 and $divisor < 0, 1, -1);
+   │          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   ╵
+    node_modules\bootstrap\scss\vendor\_rfs.scss 53:10  @import
+    node_modules\bootstrap\scss\_mixins.scss 6:9        @import
+    node_modules\bootstrap\scss\bootstrap.scss 10:9     @import
+    resources\sass\app.scss 8:9                         root stylesheet
+
+DEPRECATION WARNING [abs-percent]: Passing percentage units to the global abs() function is deprecated.
+In the future, this will emit a CSS abs() function to be resolved by the browser.
+To preserve current behavior: math.abs(100%)
+To emit a CSS abs() now: abs(#{100%})
+More info: https://sass-lang.com/d/abs-percent
+
+   ╷
+54 │   $dividend: abs($dividend);
+   │              ^^^^^^^^^^^^^^
+   ╵
+    node_modules\bootstrap\scss\vendor\_rfs.scss 54:14             divide()
+    node_modules\bootstrap\scss\mixins\_grid.scss 66:15            row-cols()
+    node_modules\bootstrap\scss\mixins\_grid-framework.scss 43:13  @content
+    node_modules\bootstrap\scss\mixins\_breakpoints.scss 65:5      media-breakpoint-up()
+    node_modules\bootstrap\scss\mixins\_grid-framework.scss 32:5   make-grid-columns()
+    node_modules\bootstrap\scss\_grid.scss 72:3                    @import
+    node_modules\bootstrap\scss\bootstrap.scss 16:9                @import
+    resources\sass\app.scss 8:9                                    root stylesheet
+
+WARNING: 301 repetitive deprecation warnings omitted.
+
+DEPRECATION WARNING [legacy-js-api]: The legacy JS API is deprecated and will be removed in Dart Sass 2.0.0.
+
+More info: https://sass-lang.com/d/legacy-js-api
+
+
+[1;1H[0J
+                         
+   Laravel Mix v6.0.49   
+                         
+
+✔ Compiled Successfully in 7658ms
+[90m┌───────────────────────────────────[39m[90m┬──────────┐[39m
+[90m│[39m                              File [90m│[39m Size     [90m│[39m
+[90m├───────────────────────────────────[39m[90m┼──────────┤[39m
+[90m│[39m                        /js/app.js [90m│[39m 5.61 MiB [90m│[39m
+[90m│[39m                    /js/galeria.js [90m│[39m 2.94 KiB [90m│[39m
+[90m│[39m                       css/app.css [90m│[39m 184 KiB  [90m│[39m
+[90m└───────────────────────────────────[39m[90m┴──────────┘[39m
+√ Mix: Compiled successfully in 7.78s
+webpack compiled [1m[32msuccessfully[39m[22m

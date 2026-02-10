@@ -1,0 +1,2 @@
+document.addEventListener("DOMContentLoaded",function(){document.querySelector(".slideshow"),document.querySelector(".overlay-galeria"),document.querySelector(".galeria img"),document.querySelector(".slideshow img")});
+//# sourceMappingURL=galeria.js.map

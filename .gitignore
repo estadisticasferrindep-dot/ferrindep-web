@@ -1,0 +1,68 @@
+# Google Drive temp
+.tmp.driveupload
+
+# Dependencies
+/node_modules
+/vendor
+google-sheets-worker/node_modules
+
+# WhatsApp bot cache & auth (large, sensitive)
+google-sheets-worker/.wwebjs_auth
+google-sheets-worker/.wwebjs_cache
+google-sheets-worker/chat_history.json
+google-sheets-worker/credentials.json
+google-sheets-worker/token.json
+google-sheets-worker/*.pem
+google-sheets-worker/test_models_raw.js
+google-sheets-worker/test_brain.js
+
+# Backup files
+*.bak
+google-sheets-worker/node_modules
+
+# Compiled assets
+/public/js/app.js
+/public/js/app.js.map
+/public/js/app.js.LICENSE.txt
+/public/css/app.css
+/public/css/app.css.map
+/public/mix-manifest.json
+/public/hot
+
+# Laravel
+/storage/*.key
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Backups & temp
+/backups
+/ferrindep
+temp_laravel.log
+output_page.html
+carrito_source*.html
+build_log.txt
+
+# Environment
+.env
+.env.backup
+
+# IDE & Config
+.idea
+*.swp
+*.swo
+Thumbs.db
+.DS_Store
+.vscode/sftp.json
+
+# Antigravity / Gemini
+.gemini
+
+# Deploy scripts (one-off)
+deploy_*.js
+
+# Media & temp storage
+tempmediaStorage
+/public/videos
+/storage/app/public

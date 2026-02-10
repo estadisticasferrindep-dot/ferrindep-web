@@ -1,0 +1,93 @@
+/* Dashboard Layout Restoration */
+
+/* Ensure the main container behaves like a grid/flex wrapper */
+#app {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 100vh;
+}
+
+/* Header: Full width at the top */
+#app > header {
+    flex: 0 0 100%;
+    width: 100%;
+    z-index: 1030;
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Keep it visible */
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Sidebar (Nav): Fixed width, full height of remaining space */
+#app > nav {
+    flex: 0 0 250px; /* Width of sidebar */
+    width: 250px;
+    background-color: #212529; /* Dark Sidebar */
+    color: #fff;
+    min-height: calc(100vh - 56px); /* Adjust based on header height, approx */
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+/* Main Content: Takes remaining space */
+#app > main {
+    flex: 1;
+    max-width: calc(100% - 250px); /* Verify subtraction */
+    padding: 20px;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar Links Styling */
+#app > nav a {
+    color: rgba(255, 255, 255, .75);
+    padding: 0.75rem 1.25rem;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+}
+
+#app > nav a:hover, 
+#app > nav a:focus,
+#app > nav a.active {
+    color: #fff;
+    background-color: rgba(255, 255, 255, .1);
+    text-decoration: none;
+}
+
+#app > nav i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Sidebar Dropdowns */
+#app > nav .dropdown-menu {
+    position: static !important; /* Stack in sidebar */
+    float: none;
+    width: 100%;
+    background-color: #2c3034;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+#app > nav .dropdown-item {
+    color: #ced4da;
+    padding-left: 2.5rem; /* Indent sub-items */
+}
+#app > nav .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, .1);
+    color: #fff;
+}
+
+/* Responsive: Collapse sidebar on small screens */
+@media (max-width: 768px) {
+    #app > nav {
+        flex: 0 0 100%;
+        width: 100%;
+        min-height: auto;
+    }
+    #app > main {
+        max-width: 100%;
+    }
+}

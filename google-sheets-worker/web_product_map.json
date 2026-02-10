@@ -1,0 +1,296 @@
+{
+  "10x10": {
+    "30cm": {
+      "id": "1",
+      "name": "10 x 10 mm. (1 mm)",
+      "height": "30cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/1"
+    },
+    "40cm": {
+      "id": "41",
+      "name": "10 x 10 mm. (1 mm)",
+      "height": "40cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/41"
+    },
+    "50cm": {
+      "id": "13",
+      "name": "10 x 10 mm. (1 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/13"
+    },
+    "60cm": {
+      "id": "43",
+      "name": "10 x 10 mm. (1 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/43"
+    },
+    "100cm": {
+      "id": "6",
+      "name": "10 x 10 mm. (1 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/6"
+    }
+  },
+  "15x15": {
+    "30cm": {
+      "id": "40",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "30cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/40"
+    },
+    "40cm": {
+      "id": "23",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "40cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/23"
+    },
+    "50cm": {
+      "id": "18",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/18"
+    },
+    "60cm": {
+      "id": "21",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/21"
+    },
+    "75cm": {
+      "id": "58",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "75cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/58"
+    },
+    "100cm": {
+      "id": "7",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/7"
+    },
+    "120cm": {
+      "id": "50",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "120cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/50"
+    },
+    "150cm": {
+      "id": "30",
+      "name": "15 x 15mm. (1,1 mm)",
+      "height": "150cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/30"
+    }
+  },
+  "25x25": {
+    "30cm": {
+      "id": "54",
+      "name": "25 x 25mm. (1,5 mm)",
+      "height": "30cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/54"
+    },
+    "40cm": {
+      "id": "19",
+      "name": "25 x 25mm. (1,5 mm)",
+      "height": "40cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/19"
+    },
+    "48cm": {
+      "id": "44",
+      "name": "25 x 25mm. (0,9 mm)",
+      "height": "48cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/44"
+    },
+    "50cm": {
+      "id": "12",
+      "name": "25 x 25mm. (1,5 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/12"
+    },
+    "60cm": {
+      "id": "22",
+      "name": "25 x 25mm. (1,5 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/22"
+    },
+    "75cm": {
+      "id": "48",
+      "name": "25 x 25mm. (1,66 mm)",
+      "height": "75cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/48"
+    },
+    "100cm": {
+      "id": "39",
+      "name": "25 x 25mm. (0,9 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/39"
+    },
+    "150cm": {
+      "id": "37",
+      "name": "25 x 25mm. (1,66 mm)",
+      "height": "150cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/37"
+    }
+  },
+  "20x20": {
+    "50cm": {
+      "id": "60",
+      "name": "20 x 20mm. (0,9 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/60"
+    },
+    "100cm": {
+      "id": "57",
+      "name": "20 x 20mm. (0,9 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/57"
+    }
+  },
+  "40x40": {
+    "50cm": {
+      "id": "34",
+      "name": "40 x 40 mm. (1,66 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/34"
+    },
+    "100cm": {
+      "id": "33",
+      "name": "40 x 40 mm. (1,66 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/33"
+    }
+  },
+  "50x50": {
+    "50cm": {
+      "id": "20",
+      "name": "50 x 50 mm. (1,66 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/20"
+    },
+    "60cm": {
+      "id": "74",
+      "name": "50 x 50 mm. (1,9 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/74"
+    },
+    "70cm": {
+      "id": "78",
+      "name": "50 x 50 mm. (1,9 mm)",
+      "height": "70cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/78"
+    },
+    "75cm": {
+      "id": "15",
+      "name": "50 x 50 mm. (2 mm)",
+      "height": "75cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/15"
+    },
+    "100cm": {
+      "id": "9",
+      "name": "50 x 50 mm. (1,66 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/9"
+    },
+    "120cm": {
+      "id": "66",
+      "name": "50 x 50 mm. (1,9 mm)",
+      "height": "120cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/66"
+    },
+    "150cm": {
+      "id": "16",
+      "name": "50 x 50 mm. (1,9 mm)",
+      "height": "150cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/16"
+    },
+    "200cm": {
+      "id": "36",
+      "name": "50 x 50 mm. (1,9 mm)",
+      "height": "200cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/36"
+    }
+  },
+  "50x150": {
+    "60cm": {
+      "id": "52",
+      "name": "50 x 150 mm. (3,3 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/52"
+    },
+    "100cm": {
+      "id": "14",
+      "name": "50 x 150 mm. (3,3 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/14"
+    },
+    "150cm": {
+      "id": "29",
+      "name": "50 x 150 mm. (3,3 mm)",
+      "height": "150cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/29"
+    },
+    "200cm": {
+      "id": "17",
+      "name": "50 x 150 mm. (3,3 mm)",
+      "height": "200cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/17"
+    }
+  },
+  "MD_8x17": {
+    "50cm": {
+      "id": "45",
+      "name": "8 x 17mm. (1 mm)",
+      "height": "50cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/45"
+    },
+    "100cm": {
+      "id": "28",
+      "name": "8 x 17mm. (1 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/28"
+    },
+    "120cm": {
+      "id": "77",
+      "name": "8 x 17mm. (1 mm)",
+      "height": "120cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/77"
+    }
+  },
+  "MD_18x40": {
+    "60cm": {
+      "id": "75",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "60cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/75"
+    },
+    "70cm": {
+      "id": "69",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "70cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/69"
+    },
+    "80cm": {
+      "id": "70",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "80cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/70"
+    },
+    "100cm": {
+      "id": "68",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "100cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/68"
+    },
+    "120cm": {
+      "id": "73",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "120cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/73"
+    },
+    "150cm": {
+      "id": "76",
+      "name": "18 x 40mm. (2 mm)",
+      "height": "150cm",
+      "url": "https://www.ferrindep.com.ar/productos/producto/76"
+    }
+  }
+}

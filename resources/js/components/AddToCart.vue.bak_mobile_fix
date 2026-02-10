@@ -1,0 +1,1246 @@
+<template>
+
+    <div >
+            <div v-if="presentaciones2.length >= 1">
+                <p v-if="desde > 0 " class="precio" style="text-align: left; font: normal normal bold 25px/34px Open Sans;
+                letter-spacing: 0px;
+                color: #FD914D;
+                margin-bottom:0">
+                        <span v-if="parseFloat(oferta)" class="precio-oferta">
+                            ${{desdeOferta}} - $ {{hastaOferta}} <span v-if="conNombre  != 1"> x mt </span>
+                        </span>
+                        $ {{desde}} - $ {{hasta}} <span v-if="conNombre  != 1"> x mt </span>
+                    </p>
+                <p  v-else class="precio" style="text-align: left; font: normal normal bold 25px/34px Open Sans;
+                letter-spacing: 0px;
+                color: #FD914D;
+                margin-bottom:0">
+                        <span style="font: normal normal bold 15px/20px Open Sans;">Consultar precio</span>
+                        
+                    </p>
+            </div>
+
+            <div class="tabla-trabajo" style="font: normal normal normal 14px/19px Open Sans;
+            letter-spacing: 0px;
+            color: #939292;
+            margin-top: 3px;">
+                {{vendidos}} vendidos
+            </div>
+
+        <hr class="subtitulos">
+
+
+        <div v-html="descripcion" style="font: normal normal normal 15px/20px Open Sans;
+        color: #333333;">
+
+        </div>
+
+        <div v-if="presentaciones2.length >= 1">
+            
+            <!-- VISTA DE ESCRITORIO (Tabla) -->
+            <div class="d-none d-md-block">
+                <table class="tabla-presentaciones">
+
+                <thead>
+                    <tr>
+                        <th class="d-none d-md-flex" style="font-size: 13px;">Presentación</th>
+                        <th class="d-flex d-md-none" style="padding-right: 13px;">Longitud</th>
+
+                        <th style="font-size: 13px; text-align:center;">Precio</th>
+                        <th class="col-unidades text-center" style="font-size: 13px;">
+                            <span class="d-none d-md-inline">Cantidad</span>
+                            <span class="d-inline d-md-none">#</span>
+                        </th>
+                        <th style="text-align:right; width:115px; font-size: 13px;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <template v-for="(presentacion, key) in presentaciones2">
+                    <tr :key="key">
+                        <td v-if="presentacion.show" style="border-bottom: 0px !important;">
+                             <!-- Dimensions (Desktop) -->
+                             <div style="font-size: 10px; color: #777; margin-bottom: 2px; white-space: nowrap; letter-spacing: -0.3px;">
+                                {{ medidas.replace(/\s/g, '') }}<span v-if="ancho">/{{ ancho }}cm</span>
+                            </div>
+                            <div v-if="espesor" style="font-size: 9px; color: #777; margin-bottom: 2px; white-space: nowrap; letter-spacing: -0.3px; line-height:1;">
+                                ({{ espesor.replace(/[()]/g, '') }})
+                            </div>
+                            
+                            {{presentacion.nombre}}
+                            
+                            <div v-if="presentacion.free" style="color:green; font-weight:bold; font-size: 13px;">(Envío gratis)</div>
+                        </td>
+                        <td v-if="presentacion.show" style="text-align: center; border-bottom: 0px !important;">
+                            <div v-if="parseFloat(presentacion.precio) <= 0 ">
+                                Consultar precio
+                            </div>
+
+                            <div v-if="parseFloat(presentacion.precio) > 0 " class="precio">
+                                <span v-if="parseFloat(oferta)" class="d-flex d-md-none" style="text-decoration: line-through; color: #999999; margin-right: 12px;">
+                                    ${{ priceNoDecimals(presentacion.precio_anterior) }}
+                                </span>
+                                <span class="d-none d-md-inline">${{presentacion.precio }}</span>
+                                <span class="d-inline d-md-none">${{ priceNoDecimals(presentacion.precio) }}</span>
+                            </div>
+                            <div v-if="presentacion.metros > 1 && parseFloat(presentacion.precio) > 0 && presentacion.medidas == null" style="font: normal normal normal 12px/17px Open Sans;">
+                                ({{Math.round(presentacion.precio / presentacion.metros)}} x m)
+                            </div>
+                            <div v-if="presentacion.medidas != null" style="font: normal normal normal 12px/17px Open Sans;">
+                                ({{presentacion.medidas}})
+                            </div>
+
+                        </td>
+                        </td>
+                        <td v-if="presentacion.show" class="col-unidades text-center" style="min-width: 140px; border-bottom: 0px !important;">
+                            <div  v-if="((parseFloat(presentacion.precio) <= 0) || (presentacion.stock <= 0 ))" style="text-align: center;">
+                                <button class="btn-agregar-mob btn-disabled" disabled style="display:inline-flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.1; padding: 4px 10px; height:auto; min-height:34px;">
+                                    <span style="font-size:10px;">NO</span>
+                                    <span style="font-size:10px;">DISPONIBLE</span>
+                                </button>
+                            </div>
+                            <div  v-else-if="(presentacion.stock == 1 )" style="text-align: center; display:flex; flex-direction:column; align-items:center;">
+                                
+                                <div style="font-size: 11px; color: #FD914D; font-weight:bold; margin-bottom:4px;">Último</div>
+
+                                <!-- Desktop Stepper Logic -->
+                                <button class="btn-agregar-mob" style="padding: 6px 14px; font-size:11px;" v-if="(cantidades[presentacion.id] == 0 || !cantidades[presentacion.id])" @click="increment(presentacion)">AGREGAR</button>
+                                <div class="stepper-ui" style="margin:0 auto;" v-else>
+                                    <button class="step-btn" @click="decrement(presentacion)">-</button>
+                                    <input class="step-input" type="number" readonly v-model="cantidades[presentacion.id]">
+                                    <button class="step-btn" @click="increment(presentacion)">+</button>
+                                </div>
+                                
+                            </div>
+
+                            <div v-else style="display:flex; justify-content:center; flex-direction:column; align-items:center;">
+                                <!-- Label Removed from here -->
+                                <!-- Desktop Stepper Logic (Standard) -->
+                                <button class="btn-agregar-mob" style="padding: 6px 14px; font-size:11px;" v-if="(cantidades[presentacion.id] == 0 || !cantidades[presentacion.id])" @click="increment(presentacion)">AGREGAR</button>
+                                <div class="stepper-ui" style="margin:0;" v-else>
+                                    <button class="step-btn" @click="decrement(presentacion)">-</button>
+                                    <input class="step-input" type="number" readonly v-model="cantidades[presentacion.id]">
+                                    <button class="step-btn" @click="increment(presentacion)">+</button>
+                                </div>
+                            </div>
+
+                            <!-- <input  :id="'cant-input-'presentacion.id" class="input-producto cantidad" type="number" placeholder="Cantidad" :min="0" :step="1" v-model="cantidad"> -->
+
+                        </td> 
+                        <td style="text-align:right; border-bottom: 0px !important;" v-if="presentacion.show && cantidades[presentacion.id]>0">
+                            $ {{cantidades[presentacion.id]>0 ?  presentacion.precio *cantidades[presentacion.id] : ''}} 
+                            <div  style="font: normal normal normal 12px/17px Open Sans;">
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- NEW: Shipping Row (Full Width) -->
+                    <tr v-if="presentacion.show" :key="'ship-'+key">
+                        <td colspan="5" style="border-top: 0px !important; padding-top: 0; padding-bottom: 8px;">
+                             <div v-if="getShippingLabel(presentacion)" v-html="getShippingLabel(presentacion)" style="font-size:11px; width: 100%;"></div>
+                        </td>
+                    </tr>
+                </template>
+
+                    <!-- <tr >
+                        <td></td>
+                        <td style="text-align:center;">
+                            
+                        </td>
+                        <td>
+                            
+                        </td> 
+                        <td v-if="total > 0" style="font: normal normal bold 18px/24px Open Sans;
+                        letter-spacing: 0px;
+                        color: #333333;">
+                            $ {{total | toCurrency}} 
+                        </td>
+                    </tr> -->
+
+                </tbody>
+
+            </table>
+            </div> <!-- End Desktop View -->
+
+            <!-- VISTA MOVIL (Tarjetas + Stepper) -->
+            <div class="d-block d-md-none mobile-cards-container">
+                <div v-for="(presentacion, key) in presentaciones2" :key="'mob-'+key" v-if="presentacion.show" class="mobile-card" style="flex-direction: column;">
+                    <div class="d-flex w-100 justify-content-between">
+                        <div class="card-left">
+                            <!-- Medidas mobile -->
+                            <div style="font-size: 10px; color: #777; margin-bottom: 2px; white-space: nowrap; letter-spacing: -0.3px; overflow: hidden; text-overflow: ellipsis;">
+                                {{ medidas }}<span v-if="ancho"> | {{ ancho }}cm</span><span v-if="espesor"> | {{ espesor }}</span>
+                            </div>
+                            <div class="card-title">{{ presentacion.nombre }}</div>
+                            
+                            <div v-if="presentacion.free" class="free-shipping">(Envío gratis)</div>
+                            
+                            <!-- Precios -->
+                            <div v-if="parseFloat(presentacion.precio) <= 0" class="card-price consult">
+                                Consultar precio
+                            </div>
+                            <div v-else class="card-price-container">
+                                <span v-if="parseFloat(oferta)" class="old-price">
+                                    ${{ priceNoDecimals(presentacion.precio_anterior) }}
+                                </span>
+                                <span class="current-price">$ {{ priceNoDecimals(presentacion.precio) }}</span>
+                            </div>
+
+                            <!-- Info extra (x metro) -->
+                            <div v-if="presentacion.metros > 1 && parseFloat(presentacion.precio) > 0 && presentacion.medidas == null" class="card-meta">
+                                ({{Math.round(presentacion.precio / presentacion.metros)}} x m)
+                            </div>
+                            <div v-if="presentacion.medidas != null" class="card-meta">
+                                ({{presentacion.medidas}})
+                            </div>
+                        </div>
+
+                        <div class="card-right">
+                            <!-- Caso: Sin stock o sin precio -->
+                            <div v-if="((parseFloat(presentacion.precio) <= 0) || (presentacion.stock <= 0 ))" class="no-stock">
+                                No disponible
+                            </div>
+                            
+                            <!-- Caso: Stock bajo -->
+                            <div v-else-if="(presentacion.stock == 1 )" class="last-unit">
+                                <div style="font-size: 11px; color: red; margin-bottom: 4px;">¡Último!</div>
+                                <!-- Reutilizamos el stepper logica aqui -->
+                                <div class="stepper-control">
+                                    <button v-if="cantidades[presentacion.id] == 0" class="btn-agregar-mob" @click="increment(presentacion)">
+                                        AGREGAR
+                                    </button>
+                                    <div v-else class="stepper-ui">
+                                        <button class="step-btn minus" @click="decrement(presentacion)">-</button>
+                                        <input type="number" readonly v-model="cantidades[presentacion.id]" class="step-input">
+                                        <button class="step-btn plus" @click="increment(presentacion)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Caso Normal -->
+                            <div v-else class="stepper-control">
+                                <button v-if="!cantidades[presentacion.id] || cantidades[presentacion.id] == 0" class="btn-agregar-mob" @click="increment(presentacion)">
+                                    AGREGAR
+                                </button>
+                                <div v-else class="stepper-ui">
+                                    <button class="step-btn minus" @click="decrement(presentacion)">-</button>
+                                    <input type="number" readonly v-model="cantidades[presentacion.id]" class="step-input">
+                                    <button class="step-btn plus" @click="increment(presentacion)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NEW: Dynamic Shipping Mobile (Moved to Bottom) -->
+                    <div v-if="getPresentationShipping(presentacion)" style="width: 100%; font-size: 10px; margin-top: 6px; padding-top: 4px; border-top: 1px solid #eee; text-align: left;">
+                        <span v-if="getPresentationShipping(presentacion).type === 'free'" style="color: #28a745; font-weight: bold;">
+                            <i class="fas fa-truck" style="font-size: 9px;"></i> {{ getPresentationShipping(presentacion).text }}
+                        </span>
+                        <span v-else-if="getPresentationShipping(presentacion).type === 'cost'" style="color: #666;">
+                            <i class="fas fa-truck" style="font-size: 9px;"></i> {{ getPresentationShipping(presentacion).text }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin Vista Movil -->
+
+        </div> 
+
+        <!-- Total Desktop -->
+        <div class="d-none d-md-flex" v-if="total > 0" style="font: normal normal bold 18px/24px Open Sans;
+                        letter-spacing: 0px;
+                        color: #333333; justify-content: flex-end;">
+                            $ {{total | toCurrency}} 
+        </div>
+        
+        <!-- Botón Desktop -->
+        <div class="d-none d-md-flex" style="flex-direction: column; align-items: flex-end;">
+            
+            <button  @click="add" 
+                class="btn-comprar" > 
+                    AGREGAR A LA ORDEN DE COMPRA
+            </button>
+
+            <!-- REACTIVE SHIPPING LABEL (DESKTOP) -->
+            <div v-if="dynamicShippingLabel" v-html="dynamicShippingLabel" class="mt-2 text-center shipping-label" style="font-size: 13px; line-height: 1.4;"></div>
+        </div>
+
+        <!-- STICKY FOOTER MOBILE -->
+        <div v-if="total > 0" class="mobile-sticky-footer d-flex d-md-none" style="flex-direction:column;">
+             <div style="display:flex; width:100%; justify-content:space-between; align-items:center;">
+                <div class="footer-total">
+                    Total: ${{ priceNoDecimals(total) }}
+                </div>
+                <button @click="add" class="footer-btn">
+                    CONTINUAR <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+             <!-- REACTIVE SHIPPING LABEL (MOBILE) -->
+            <div v-if="dynamicShippingLabel" v-html="dynamicShippingLabel" class="mt-1 text-center" style="font-size: 10px; line-height: 1.2; width:100%; color:#fff;"></div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    import Swal from 'sweetalert2';
+    export default {
+        name: 'AddToCartButton',
+        props: {  // lo que recibo de FUERA del componente
+            id: {type: Number},
+            imagen: {type: String},
+            oferta: {type: Boolean},
+            medidas:{type: String},
+            espesor: {type: String},
+            descripcion: {type: String},
+            presentaciones: {},
+            ancho:{type: String},
+            ruta: {type: String, default: ''},
+            vendidos:{type: Number},
+            familia: {type: String},
+            conNombre: {type: Number},
+            // NEW PROP
+            anulaEnvio: [Boolean, String, Number],
+            // NEW PROPS FOR SHIPPING
+            shippingRates: {
+                type: Array, 
+                default: () => [] 
+            },
+            zonaId: {
+                type: Number,
+                default: null
+            },
+            locationName: {
+                type: String,
+                default: ''
+            },
+            locationFullName: {
+                type: String,
+                default: ''
+            },
+            realZonaId: { type: Number, default: null },
+            // RAW DATA FOR CLIENT-SIDE RESOLUTION
+            zonas: { type: Array, default: () => [] },
+            destinos: { type: Array, default: () => [] },
+            destinoZonas: { type: Array, default: () => [] },
+        },
+        data() { // lo que tengo de mi componente, sus datos, tambien las globales con window
+            return {
+                cantidad: 1,
+                presentaciones2: {},
+                price:0,
+                desde: 0, 
+                desdeOferta: 0,
+                cantidades:{},
+                total: 0,
+                hasta:0,
+                hastaOferta:0,
+                cart: [],
+                // SHIPPING DATA
+                shippingCost: null,
+                calculatedWeight: 0
+            };
+        },
+        watch:{
+            cantidades: {
+                handler(val){
+                    // Avoid infinite loop by not mutating if not necessary (or handle in methods)
+                    this.redondear_cantidades()
+                    this.validacionCantidad()
+                    this.calculo_total()
+                    this.calculateShipping() // NEW: Recalculate shipping
+                },
+                deep: true
+            }
+        },
+        created() { // lo que aparece cuando se crea el componente
+            this.cantidad = 1
+            // console.log(this.familia)
+
+            if (typeof this.presentaciones === 'string') {
+                try {
+                    this.presentaciones2 = JSON.parse(this.presentaciones);
+                } catch(e) {
+                    console.error("Error parsing presentaciones:", e);
+                    this.presentaciones2 = [];
+                }
+            } else {
+                this.presentaciones2 = this.presentaciones || [];
+            }
+
+            // Initialize cantidades to ensure reactivity
+            if (this.presentaciones2 && this.presentaciones2.length) {
+                this.presentaciones2.forEach(p => {
+                    this.$set(this.cantidades, p.id, 0); 
+                });
+            }
+
+            this.desdeCalcular()
+            
+            // Logs removed for production
+
+            this.calculateShipping() // Initial calc
+        },
+        computed: {
+            isPickupOnly() {
+                // Return true only if 1, "1", true, or "true".
+                // Explicitly return false for 0, "0", false, "false", null, undefined.
+                if (this.anulaEnvio === 1 || this.anulaEnvio === '1' || this.anulaEnvio === true || this.anulaEnvio === 'true') {
+                    return true;
+                }
+                return false;
+            },
+            formattedLocationName() {
+                // Strategy 1: Check Resolved Zone (Most authoritative)
+                // If the system thinks it's Zone 1 (CABA), label it CABA.
+                let resolved = this.resolveClientSideZone();
+                if (resolved && resolved.id == 1) {
+                    return "CABA";
+                }
+
+                // Strategy 2: String checks (Fallback)
+                if (this.locationName) {
+                    let upper = this.locationName.toUpperCase();
+                    if (upper.includes("CIUDAD AUTÓNOMA") || upper === "CABA") return "CABA";
+                }
+                
+                if (this.locationFullName) {
+                    let upper = this.locationFullName.toUpperCase();
+                    if (upper.includes("CIUDAD AUTÓNOMA") || upper.includes("CABA")) return "CABA";
+                }
+                
+                return this.locationName;
+            },
+            dynamicShippingLabel() {
+                // 1. Validate Location
+                if (!this.locationName) return null;
+
+                // 2. Client-Side Resolution of Zone (Robust Logic)
+                let resolved = this.resolveClientSideZone();
+                
+                let zoneId = null;
+                let zonePrice = 0;
+
+                if (resolved) {
+                    zoneId = resolved.id;
+                    zonePrice = resolved.price;
+                } else {
+                     // Fallback to realZonaId if client-side failed
+                     if (this.realZonaId && this.realZonaId != 'null') {
+                        zoneId = this.realZonaId;
+                        let zone = this.zonas.find(z => z.id == zoneId);
+                        if (zone) zonePrice = parseFloat(zone.precio || zone.costo || 0);
+                     }
+                }
+
+                if (!zoneId) return null;
+
+                // 3. Calculate Weight & Check Free Shipping
+                let totalWeight = 0;
+                let hasSelection = false;
+                let allFree = true;
+
+                // Loop through presentations to calculate total weight
+                for (let i = 0; i < this.presentaciones2.length; i++) {
+                     let p = this.presentaciones2[i];
+                     let qty = this.cantidades[p.id] || 0;
+                     if (qty > 0) {
+                        hasSelection = true;
+                        let weight = parseFloat(p.peso || 0); // Unit weight
+                        totalWeight += (weight * qty);
+
+                        // Check Free Status for THIS item for THIS zone
+                        let isFreeItem = false;
+                        if (zoneId == 1 && p.envio_gratis_zona_1 == 1) isFreeItem = true;
+                        if (zoneId == 2 && p.envio_gratis_zona_2 == 1) isFreeItem = true;
+                        if (zoneId == 3 && p.envio_gratis_zona_3 == 1) isFreeItem = true;
+                        if (zoneId == 4 && p.envio_gratis_zona_4 == 1) isFreeItem = true;
+                        if (p.envio_gratis == 1) isFreeItem = true; // Legacy
+                        
+                        if (!isFreeItem) {
+                            allFree = false;
+                        }
+                     }
+                }
+
+                if (!hasSelection) return null; // Show nothing if 0 quantity
+
+                let cityName = `<b>${this.formattedLocationName}</b>`;
+
+                // SCENARIO X: Pickup Only (Anula Envio)
+                if (this.isPickupOnly) {
+                    return `<span style="color:#FD914D; font-weight:bold;">
+                                <i class="fas fa-truck"></i> Por el momento, solo retiro por nuestro deposito
+                            </span>`;
+                }
+
+                // SCENARIO A: Free Shipping
+                if (allFree) {
+                    return `<span style="color:#28a745; font-weight:bold;">
+                                <i class="fas fa-truck"></i> Envío a su domicilio en ${cityName} sin cargo en 24/48hs
+                            </span>`;
+                }
+
+                // SCENARIO B: Paid Shipping (Apply 30kg Rule on TOTAL Weight)
+                // Logic: 1 Bulto every 30kg of TOTAL weight
+                let bultos = Math.ceil(totalWeight / 30);
+                if (bultos < 1) bultos = 1;
+
+                let finalCost = zonePrice * bultos;
+                let formattedCost = this.formatPrice(finalCost);
+                
+                return `<div>
+                            <i class="fas fa-truck"></i> Entrega a domicilio en ${this.formattedLocationName} <b>$${formattedCost}</b>
+                        </div>
+                        <br><small class="text-muted">(Calculado por peso total: ${totalWeight.toFixed(2)}kg)</small>
+                        `;
+            }
+        },
+        methods: {
+            calculateShipping() {
+                // Deprecated: Now handled by dynamicShippingLabel computed property.
+                this.shippingCost = null; 
+            },
+
+            // NEW: Centralized Zone Matcher
+            resolveClientSideZone() {
+                if (!this.locationName) return null;
+                // Normalize Input
+                let city = this.locationName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                
+                // Find Destino
+                let destino = this.destinos.find(d => 
+                    d.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim() === city
+                );
+
+                if (!destino && this.locationPartido) {
+                     let partido = this.locationPartido.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                     destino = this.destinos.find(d => {
+                         let dName = d.nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+                         return dName === partido || dName.includes(partido) || partido.includes(dName);
+                     });
+                }
+                
+                if (!destino) return null;
+
+                // Find Zone via DestinoZona
+                let rel = this.destinoZonas.find(dz => dz.destino_id == destino.id);
+                if (!rel) return null;
+
+                let zone = this.zonas.find(z => z.id == rel.zona_id);
+                if (!zone) return null;
+
+                return {
+                    id: zone.id,
+                    price: parseFloat(zone.precio || zone.costo || 0)
+                };
+            },
+
+            formatPrice(value) {
+                let val = (value/1).toFixed(2).replace('.', ',');
+                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            },
+            redondear_cantidades(){
+                for (let index = 0; index < this.presentaciones2.length; index++) {
+                    let presentacion = this.presentaciones2[index]
+                    if (this.cantidades[presentacion.id] > 0) {
+                        let rounded = Math.round(this.cantidades[presentacion.id]);
+                        if (this.cantidades[presentacion.id] !== rounded) {
+                            this.cantidades[presentacion.id] = rounded
+                        }
+                    }
+                }
+            },
+            validacionCantidad(){
+                let cart = window.getCartSafe();
+ 
+
+                for (let index = 0; index < this.presentaciones2.length; index++) {
+                    let item 
+                    let lim
+                    let presentacion = this.presentaciones2[index]
+
+                    item = cart.find(item=> item.id == this.id && item.presentacionId == presentacion.id)
+
+                    
+                    if(item){
+                        lim = Math.min(presentacion.limite,presentacion.stock - item.cantidad)
+                    }else{
+                        lim = Math.min(presentacion.limite,presentacion.stock )
+                    }
+
+                    if (this.cantidades[presentacion.id] > lim ) {
+                        // Only update if different to avoid watcher loop
+                        if (this.cantidades[presentacion.id] !== lim) {
+                            this.cantidades[presentacion.id] = lim
+                        }
+                    }
+                }
+            },
+            calculo_total(){
+                let tot = 0
+
+                for (let index = 0; index < this.presentaciones2.length; index++) {
+                // console.log( this.presentaciones2.length)
+
+                    tot += this.presentaciones2[index].precio * (this.cantidades[this.presentaciones2[index].id] ? this.cantidades[this.presentaciones2[index].id] : 0 ) 
+                    
+                }
+
+                this.total = tot
+                
+            },
+            desdeCalcular(){
+if(this.conNombre == 1){
+                    let preciosXMetro  = this.presentaciones2.map(function(p) {
+                        return p.precio;
+                    });
+                    this.desde = Math.min.apply(null, preciosXMetro)
+                    this.hasta = Math.max.apply(null, preciosXMetro)
+
+
+                    let preciosXMetroOferta  = this.presentaciones2.map(function(p) {
+                        return p.precio_anterior;
+                    });
+                    this.desdeOferta = Math.min.apply(null, preciosXMetroOferta)
+                    this.hastaOferta = Math.max.apply(null, preciosXMetroOferta)
+
+                }
+                else{
+                    let preciosXMetro  = this.presentaciones2.map(function(p) {
+                        return Math.round((p.precio)/p.metros);
+                    });
+                    this.desde = Math.min.apply(null, preciosXMetro)
+                    this.hasta = Math.max.apply(null, preciosXMetro)
+
+
+                    let preciosXMetroOferta  = this.presentaciones2.map(function(p) {
+                        return Math.round((p.precio_anterior)/p.metros);
+                    });
+                    this.desdeOferta = Math.min.apply(null, preciosXMetroOferta)
+                    this.hastaOferta = Math.max.apply(null, preciosXMetroOferta)
+
+                }
+            },
+            add(){
+                console.log("AddToCart: Starting add()", { total: this.total, cantidades: this.cantidades });
+
+                if(this.total>0){
+                console.log('ADD_BUNDLE_MARKER_20251218');
+                
+                let cart = [];
+                try {
+                  const raw = localStorage.getItem('cartQunuy');
+                  const parsed = raw ? JSON.parse(raw) : [];
+                  cart = Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                  localStorage.removeItem('cartQunuy');
+                  cart = [];
+                }
+                
+                if (!Array.isArray(cart)) {
+                   cart = [];
+                }
+
+                for (let index = 0; index < this.presentaciones2.length; index++) {
+                    
+                    let presentacion = this.presentaciones2[index]
+// console.log(presentacion)
+                    let item = cart.find(item=> item.id == this.id && item.presentacionId == presentacion.id)
+
+                    if (this.cantidades[presentacion.id] > 0) {
+                        if(item){
+                            item.cantidad = parseInt(this.cantidades[presentacion.id]) + parseInt(item.cantidad) 
+                        }
+                        else{
+// console.log('add'+ this.anulaEnvio)
+
+                            cart.push({ 
+                                id: this.id,
+                                medidas: this.medidas,
+                                espesor: this.espesor,
+                                precio: presentacion.precio,
+                                presentacionId: presentacion.id,
+                                cantidad: this.cantidades[presentacion.id],
+                                free: presentacion.free,
+                                stock: presentacion.stock,
+                                peso: presentacion.peso,
+                                limite: presentacion.limite,
+                                nombre: presentacion.nombre,
+                                metros: presentacion.metros,
+                                metros: presentacion.metros,
+                                anulaEnvio: this.isPickupOnly ? "1" : "0",
+                                ancho: this.ancho,
+                                descripcion:this.descripcion,
+                                imagen: this.imagen,
+                                familia: this.familia,
+                                // NUEVO: Flags de Zona
+                                envio_gratis_zona_1: presentacion.envio_gratis_zona_1,
+                                envio_gratis_zona_2: presentacion.envio_gratis_zona_2,
+                                envio_gratis_zona_3: presentacion.envio_gratis_zona_3,
+                                envio_gratis_zona_4: presentacion.envio_gratis_zona_4
+                            })
+                        }
+                    }
+                }
+
+                console.log("AddToCart: Saving to localStorage...");
+                try {
+                    localStorage.setItem("cartQunuy",JSON.stringify(cart));
+                    console.log("AddToCart: Saved OK", JSON.stringify(cart));
+                } catch(e) {
+                    alert("Error guardando carrito: " + e.message);
+                }
+
+
+                this.validacionCantidad()
+               
+                // Safe Cart Update
+                try {
+                    console.log("AddToCart: Updating UI counter...");
+                    this.$root?.$refs?.cart?.count?.();
+                } catch (e) {
+                    // console.error("Error updating cart counter:", e);
+                }
+                // NEW: Sync to Session (Robut Implementation)
+                // We wrap this in a promise chain that ALWAYS ends in redirect.
+                
+                const syncAndRedirect = async () => {
+                    try {
+                        const meta = document.querySelector('meta[name="csrf-token"]');
+                        const csrfToken = meta ? meta.content : null;
+                        
+                        if (csrfToken && cart && cart.length > 0) {
+                            for (let p of this.presentaciones2) {
+                                if (this.cantidades[p.id] > 0) {
+                                    let cartItem = cart.find(c => (c.presentacionId == p.id || c.id == p.id)); 
+                                    if (cartItem) {
+                                        await fetch('/carrito/session/set-qty', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                                            body: JSON.stringify({
+                                                presentacion_id: p.id,
+                                                qty: cartItem.cantidad
+                                            })
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Session sync failed (non-blocking):", e);
+                    } finally {
+                        // ALWAYS Redirect
+                         this.$root.$emit('count','data');
+        
+                        console.log("AddToCart: Redirecting to", this.ruta);
+                        if (this.ruta) {
+                            window.location.href = this.ruta;
+                        } else {
+                            window.location.reload();
+                        }
+                    }
+                };
+
+                syncAndRedirect();
+            }
+                else{
+                    Swal.fire(
+                    'Cuidado!',
+                    'No se ha indicado ninguna cantidad',
+                    'warning'
+                    )  
+                }
+            },
+            formatPrice(value) {
+                let val = (value/1).toFixed(2).replace('.', ',')
+                return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+            },
+            priceNoDecimals(precio) {
+                if (precio === null || precio === undefined) return '';
+
+                let s = String(precio).trim();
+
+                // FIX: Validar si es un número "normal" (ej: 59969 o 59969.00) antes de reemplazar
+                // Si contiene comas, asumimos formato europeo/local y aplicamos limpieza
+                if (s.includes(',')) {
+                    s = s.replace(/\./g, "").replace(/,/g, ".");
+                } 
+                // Si NO tiene comas pero tiene puntos, y parece float (ej 59.90, no miles), cuidado.
+                // Asumimos que si viene del backend Laravel como float/double, viene con punto decimal.
+                
+                const n = Number(s);
+                if (!isFinite(n)) return String(precio); // Fallback
+
+                // redondeo al entero más cercano
+                const entero = Math.round(n);
+
+                // usa el formateador global (window.toCurrency) y después fuerza “sin decimales”
+                let out = window.toCurrency ? window.toCurrency(entero) : String(entero);
+
+                // por las dudas, si el formateador deja decimales:
+                out = out.replace(/([.,]00)$/, "");
+
+                return out;
+            },
+            increment(p) {
+                let current = this.cantidades[p.id] || 0;
+                let limit = Math.min(Math.floor(p.limite), p.stock);
+                if (current < limit) {
+                    this.$set(this.cantidades, p.id, current + 1);
+                }
+            },
+            decrement(p) {
+                let current = this.cantidades[p.id] || 0;
+                if (current > 0) {
+                     this.$set(this.cantidades, p.id, current - 1);
+                }
+            },
+            // NEW: Helper for Row Calculation
+            getPresentationShipping(p) {
+                if (this.isPickupOnly) return { type: 'cost', text: 'Por el momento, solo retiro por nuestro deposito' };
+                if (!this.locationName) return null;
+                // If we don't have rates, we can't calculate cost, but if zone is free we should know.
+                // However, without rates or zoneId, can we trust?
+                // We rely on realZonaId
+                
+                let resolved = this.resolveClientSideZone();
+                let z = resolved ? resolved.id : (this.realZonaId || this.zonaId);
+                
+                if (!z) return null;
+
+                // 1. Check Free
+                let isFree = false;
+                
+                // Loose comparison intentionally
+                if (z == 1 && p.envio_gratis_zona_1 == 1) isFree = true;
+                if (z == 2 && p.envio_gratis_zona_2 == 1) isFree = true;
+                if (z == 3 && p.envio_gratis_zona_3 == 1) isFree = true;
+                if (z == 4 && p.envio_gratis_zona_4 == 1) isFree = true;
+
+                // Legacy Fallback (Product-level override if needed, though we rely on zones now)
+                if (p.envio_gratis == 1) isFree = true; 
+
+                if (isFree) return { type: 'free', text: 'Envío sin cargo a ' + this.formattedLocationName };
+
+                // 2. Check Cost
+                if (!this.shippingRates || this.shippingRates.length === 0) return null;
+                
+                let baseCost = parseFloat(this.shippingRates[0].costo); // Assume flat or base logic
+                let peso = parseFloat(p.peso || 0);
+
+                // Split Weight Logic Clone
+                let bultos = Math.max(1, Math.ceil(peso / 30));
+                let finalCost = baseCost * bultos;
+
+                return { type: 'cost', text: 'Entrega a domicilio en ' + this.formattedLocationName + ' $' + this.formatPrice(finalCost) };
+            },
+
+            getShippingLabel(producto) {
+                // 1. Validate Location & Props
+                if (!this.locationName) return null;
+
+                // NEW: Pickup Only Check
+                if (this.isPickupOnly) {
+                    return `<div style="font-size:11px; margin-top:0px; margin-bottom:2px; color:#FD914D; line-height:1.1;">
+                                <i class="fas fa-truck"></i> Por el momento, solo retiro por nuestro deposito
+                            </div>`;
+                }
+
+                let zoneId = null;
+                let basePrice = 0;
+
+                // NEW STRATEGY: Hybrid (Client-Side First, then Backend)
+                
+                // 1. Try Client-Side (Matches Dynamic Shipping Label)
+                let resolved = this.resolveClientSideZone();
+                if (resolved) {
+                    zoneId = resolved.id;
+                    basePrice = resolved.price;
+                }
+
+                // 2. If Failed, Trust Backend (realZonaId)
+                if ((!zoneId || !basePrice) && this.realZonaId && this.realZonaId != 'null') {
+                     zoneId = this.realZonaId;
+                     let zone = this.zonas ? this.zonas.find(z => z.id == zoneId) : null;
+                     if (zone) {
+                         basePrice = parseFloat(zone.precio || zone.costo || 0);
+                     }
+                     // Option B: If backend sent specific shippingRates
+                     if (this.shippingRates && this.shippingRates.length > 0 && (!zone || basePrice == 0)) {
+                         basePrice = parseFloat(this.shippingRates[0].costo);
+                     }
+                }
+                
+                // If still no price, return null
+                if (!basePrice && !zoneId) return null;
+
+
+                // 3. REACTIVE WEIGHT CALCULATION
+                // Get Unit Weight and Current Quantity from the row input (this.cantidades)
+                let unitWeight = parseFloat(producto.peso || producto.weight || 0);
+                
+                // Get qty from local quantities map
+                let qty = parseInt(this.cantidades[producto.id] || 0);
+                
+                // SHOW FOR 1 UNIT IF 0 (Preview Mode)
+                if (qty < 1) qty = 1;
+                
+                let totalWeight = unitWeight * qty;
+
+                // 4. FREE SHIPPING CHECK (Zone Specific)
+                let isFree = false;
+                if (zoneId == 1 && producto.envio_gratis_zona_1 == 1) isFree = true;
+                if (zoneId == 2 && producto.envio_gratis_zona_2 == 1) isFree = true;
+                if (zoneId == 3 && producto.envio_gratis_zona_3 == 1) isFree = true;
+                if (zoneId == 4 && producto.envio_gratis_zona_4 == 1) isFree = true;
+                if (producto.envio_gratis == 1) isFree = true;
+
+                let cityName = `<b>${this.locationName}</b>`;
+
+                // 5. RETURN HTML
+                if (isFree) {
+                    return `<div style="font-size:10px; margin-top:0px; margin-bottom:2px; color:#28a745; font-weight:bold; line-height:1.1;">
+                                <i class="fas fa-truck"></i> Gratis a ${cityName}
+                            </div>`;
+                }
+
+                // PAID: Calculate Bultos (30kg Rule)
+                let bultos = Math.ceil(totalWeight / 30);
+                if (bultos < 1) bultos = 1;
+                
+                let finalCost = basePrice * bultos;
+                
+                // Formatting
+                let val = (finalCost/1).toFixed(2).replace('.', ',');
+                let formattedCost = val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                return `<div style="font-size:11px; margin-top:0px; margin-bottom:2px; color:#FD914D; line-height:1.1;">
+            <i class="fas fa-truck"></i> Entrega a domicilio en ${cityName} <b>$${formattedCost}</b>
+        </div>`;
+            }
+        },
+
+        
+    };
+</script>
+
+<style scoped>
+    /* Stepper UI (Global) */
+    .btn-agregar-mob {
+        background: #FD914D;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+    .btn-disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+    .stepper-ui {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .step-btn {
+        background: #f8f9fa;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+    }
+    .stepper-ui .step-btn {
+        width: 25px;
+        height: 28px;
+        border: none;
+        background: #f8f9fa;
+        font-weight: bold;
+        color: #333;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+    }
+    .stepper-ui .step-input {
+        width: 35px;
+        height: 28px;
+        border: none;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        text-align: center;
+        font-size: 13px;
+        /* -moz-appearance: textfield; */
+        background: white;
+    }   
+    
+    .card-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        min-width: 110px;
+    }
+
+    table{
+        width: 100%;
+        margin-top:30px;
+    }
+
+    table thead{
+        font: normal normal 600 16px/22px Open Sans;
+        color: #333333;
+    }
+
+    table tbody{
+        font: normal normal normal 16px/22px Open Sans;
+        color: #333333;
+    }
+
+    table td{
+        padding-top:13px;
+        padding-bottom:13px;
+    }
+        table tbody tr{
+        border-top: 1px solid rgba(51, 51, 51, 0.15);
+        border-bottom: 1px solid rgba(51, 51, 51, 0.15);
+    }
+
+    .presentacion {
+        border: 1px solid #A6CE39;
+        border-radius: 4px;
+        font: normal normal 300 15px/18px Open Sans;
+        letter-spacing: 0px;
+        color: #A6CE39;
+        margin-right: 3;
+        padding: 3 0 3 0;
+        cursor:pointer;
+        text-align: center;
+        width:23.5%;
+        margin-bottom:5px;
+        width:35.5%;
+    }
+
+
+    .presentacion:hover, .presentacion.select{
+        background: #A6CE39 0% 0% no-repeat padding-box;
+        border: 1px solid #A6CE39;
+        color: #FFFFFF;
+    }
+
+    .subtitulos{
+        font: normal normal normal 16px/21px Open Sans;
+        font-weight: 500;
+        letter-spacing: 0px;
+        color: #505050;
+    }
+
+    .btn-comprar {
+        background: rgba(253, 145, 77, 1) 0% 0% no-repeat padding-box;
+        border: 1px solid rgba(253, 145, 77, 1);
+        border-radius: 8px;
+        text-align: center;
+        font: normal normal bold 14px/17px Open Sans;
+        letter-spacing: 0.56px;
+        color: #FFFFFF;
+        text-transform: uppercase;
+
+        margin-top: 20px;
+        padding: 12px 0;
+        padding-left: 55px;
+        padding-right: 55px;
+        border:none;
+    }
+
+
+    .tabla-presentaciones .precio{
+        font: normal normal bold 16px Open Sans;
+        color: #FD914D;
+    }
+
+    .input-producto{
+        border:none;
+        text-align: left;
+        padding-left:15px;
+        margin-right:14px;
+        margin-top: 20px;
+        background: #F8F8F8 0% 0% no-repeat padding-box;
+        border-radius: 8px;
+        margin: 0;
+        font: normal normal normal 18px/24px Open Sans;
+        letter-spacing: 0px;
+        color: #333333;
+    }
+
+    .box-clase-mini{
+        margin-top:22px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        max-width: 95%;
+        max-height: 95%;
+        
+        margin-right: calc(var(--bs-gutter-x)/ 2);
+        margin-left: calc(var(--bs-gutter-x)/ 2);
+        padding: 0;
+    }
+
+    .box-clase-mini .overlay{
+        padding-bottom: 100%;
+    }
+
+    .box-clase-mini .overlay:hover{
+        box-shadow: 0 0 0 9px #E9E9E9;
+    }
+
+
+    @media screen and (max-width: 800px) {
+        .cantidad{
+            width: 44px;
+        }
+
+        .btn-comprar{
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+    } 
+
+
+
+
+
+
+
+
+    .add-to-cart-button {
+        display: inline-block;
+        padding: 0.4em 1em;
+        border: none;
+        font: inherit;
+        font-size: 15px;
+        text-transform: uppercase;
+        color: #fff;
+        background-color: #2f6410;
+        cursor: pointer;
+        transition: opacity 200ms ease;
+    }
+    .checkout-button {
+        display: inline-block;
+        padding: 0.4em 1em;
+        border: none;
+        font: inherit;
+        font-size: 15px;
+        text-transform: uppercase;
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+        color: #fff;
+        background-color: #111282;
+        cursor: pointer;
+        transition: opacity 200ms ease;
+    }
+
+    .add-to-cart-button:hover {
+        opacity: 0.75;
+    }
+
+    /* Ajustes SOLO mobile */
+    @media (max-width: 768px) {
+        .mobile-cards-container {
+            margin-top: 15px;
+            padding-bottom: 80px; /* Espacio para el sticky footer */
+        }
+        .mobile-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .card-left {
+            flex: 1;
+            padding-right: 10px;
+        }
+        .card-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        .free-shipping {
+            font-size: 11px;
+            color: green;
+            font-weight: bold;
+        }
+        .card-price-container {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .old-price {
+            font-size: 12px;
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 5px;
+        }
+        .card-meta {
+            font-size: 12px;
+            color: #777;
+        }
+        
+
+
+        /* Sticky Footer */
+        .mobile-sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 12px 16px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 9999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-total {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .footer-btn {
+            background: #FD914D;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .no-stock {
+            background: #ccc;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 12px; 
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            min-height: 34px; /* Ensure similar height if needed */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+    }
+</style>
